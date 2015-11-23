@@ -28,7 +28,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using MMB;
-using AcroPDFLib;
+//using AcroPDFLib;
 
 namespace MyNes
 {
@@ -40,10 +40,10 @@ namespace MyNes
             // Create new pdf browser !
             try
             {
-                pdfBrowser = new AxAcroPDFLib.AxAcroPDF();
-                pdfBrowser.Parent = this;
-                pdfBrowser.Dock = DockStyle.Fill;
-                pdfBrowser.BringToFront();
+                //pdfBrowser = new AxAcroPDFLib.AxAcroPDF();
+                //pdfBrowser.Parent = this;
+                //pdfBrowser.Dock = DockStyle.Fill;
+                //pdfBrowser.BringToFront();
                 initialized = true;
                 label1.Visible = false;
             }
@@ -55,7 +55,7 @@ namespace MyNes
             Clear();
         }
         private bool initialized = false;
-        private AxAcroPDFLib.AxAcroPDF pdfBrowser;
+        //private AxAcroPDFLib.AxAcroPDF pdfBrowser;
         private string currentID;
         private MyNesDetectEntryInfo[] detects;
         private int fileIndex;
@@ -67,8 +67,8 @@ namespace MyNes
             try
             {
                 // TODO: clear adobe reader control.
-                if (initialized)
-                    pdfBrowser.Visible = false;
+                //if (initialized)
+                //    pdfBrowser.Visible = false;
             }
             catch { }
 
@@ -87,8 +87,8 @@ namespace MyNes
         {
             try
             {
-                if (initialized)
-                    pdfBrowser.Visible = false;
+                //if (initialized)
+                //    pdfBrowser.Visible = false;
             }
             catch { }
             StatusLabel.Text = (fileIndex + 1) + " / " + detects.Length;
@@ -104,8 +104,8 @@ namespace MyNes
                 {
                     if (initialized)
                     {
-                        pdfBrowser.Visible = true;
-                        pdfBrowser.LoadFile(detects[fileIndex].Path);
+                        //pdfBrowser.Visible = true;
+                        //pdfBrowser.LoadFile(detects[fileIndex].Path);
                         System.Diagnostics.Trace.WriteLine("PDF FILE LOADED: " + detects[fileIndex].Path);
                     }
                 }
