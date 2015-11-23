@@ -57,7 +57,7 @@ namespace MLV
         private int toolTipY = 0;
         private int currentItemIndexOfToolTip;
         private string currentColumnIDOfToolTip;
-        private bool activeToolTip;
+        //private bool activeToolTip;
 
         #region properties
         /// <summary>

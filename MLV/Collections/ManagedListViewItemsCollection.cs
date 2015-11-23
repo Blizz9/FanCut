@@ -79,10 +79,10 @@ namespace MLV
             if (owner != null)
                 owner.OnItemAdded();
         }
-        public new void AddNoEvent(ManagedListViewItem item)
-        {
-            base.Add(item);
-        }
+        //public new void AddNoEvent(ManagedListViewItem item)
+        //{
+        //    base.Add(item);
+        //}
         /// <summary>
         /// Clear this collection
         /// </summary>

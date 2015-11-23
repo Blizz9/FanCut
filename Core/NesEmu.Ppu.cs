@@ -52,8 +52,8 @@ namespace MyNes.Core
         private static bool screenPointerMode;
         private static int screenPointerPos;
         private static int screenPointerStart;
-        private static bool hideForbbidenLines;
-        private static int forbbidenLinesCount;
+        //private static bool hideForbbidenLines;
+        //private static int forbbidenLinesCount;
         private static int[] palette;
         private static int[] bkg_pixels;
         private static int[] spr_pixels;

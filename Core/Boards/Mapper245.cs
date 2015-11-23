@@ -64,7 +64,7 @@ namespace MyNes.Core
             irq_counter = 0;
             irq_reload = 0xFF;
             old_irq_counter = 0;
-            // mmc3_alt_behavior = false;
+            mmc3_alt_behavior = false;
             irq_clear = false;
         }
         public override void WritePRG(ref int address, ref byte data)

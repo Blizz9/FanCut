@@ -71,7 +71,7 @@ namespace MyNes.Core
         private static double DeadTime;
         private static double LastFrameTime;
         private static double FramePeriod = (1.0 / 60.0988);
-        private static double FPS = 0;
+        //private static double FPS = 0;
         public static int FPSDone;
         // Requests !
         private static bool request_pauseAtFrameFinish;
@@ -460,11 +460,11 @@ namespace MyNes.Core
             SpeedLimitterON = true;
 
             if (TVFormat == TVSystem.NTSC)
-                FramePeriod = (1.0 / (FPS = 60.0988));
+                FramePeriod = (1.0 / (60.0988));
             else if (TVFormat == TVSystem.PALB)
-                FramePeriod = (1.0 / (FPS = 50.0));
+                FramePeriod = (1.0 / (50.0));
             else if (TVFormat == TVSystem.DENDY)
-                FramePeriod = (1.0 / (FPS = 50.0));
+                FramePeriod = (1.0 / (50.0));
         }
         private static void softReset()
         {
