@@ -22,6 +22,7 @@ using System;
 using System.Reflection;
 using System.IO;
 using System.Diagnostics;
+using System.Collections.Generic;
 /*Memory section*/
 namespace MyNes.Core
 {
@@ -29,7 +30,7 @@ namespace MyNes.Core
     {
         private static Board board;
         // Internal 2K Work RAM (mirrored to 800h-1FFFh)
-        private static byte[] WRAM;
+        public static byte[] WRAM;
         private static byte[] palettes_bank;
         // Accessed via $2004
         private static byte[] oam_ram;
@@ -42,6 +43,8 @@ namespace MyNes.Core
         private static byte temp_4015;
         private static byte temp_4016;
         private static byte temp_4017;
+
+        public static Dictionary<ushort, Action<byte, byte>> WriteChangeTriggers;
 
         private static void MEMInitialize(IRom rom)
         {
@@ -303,7 +306,7 @@ namespace MyNes.Core
             // Should not reach here !
             return 0;
         }
-        private static void Write(int address, byte value)
+        public static void Write(int address, byte value)
         {
             BUS_RW_P = BUS_RW;
             BUS_ADDRESS = address;
@@ -313,6 +316,17 @@ namespace MyNes.Core
 
             if (address < 0x2000)// Internal 2K Work RAM (mirrored to 800h-1FFFh)
             {
+                if (WriteChangeTriggers != null)
+                {
+                    if (WriteChangeTriggers.ContainsKey((ushort)address))
+                    {
+                        byte previousValue = WRAM[address & 0x7FF];
+
+                        if (value != previousValue)
+                            WriteChangeTriggers[(ushort)address](previousValue, value);
+                    }
+                }
+
                 WRAM[address & 0x7FF] = value;
             }
             else if (address < 0x4000)

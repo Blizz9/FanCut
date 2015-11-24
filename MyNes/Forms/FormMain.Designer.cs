@@ -748,6 +748,7 @@ namespace MyNes
             this.Activated += new System.EventHandler(this.FormMain_Activated);
             this.Deactivate += new System.EventHandler(this.FormMain_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
+            this.Load += new System.EventHandler(this.FormMain_Load);
             this.ResizeBegin += new System.EventHandler(this.FormMain_ResizeBegin);
             this.ResizeEnd += new System.EventHandler(this.FormMain_ResizeEnd);
             this.menuStrip1.ResumeLayout(false);

@@ -1684,5 +1684,196 @@ namespace MyNes
             frm.ShowDialog(this);
             NesEmu.EmulationPaused = false;
         }
+
+
+
+        private const ushort PLAYER_STATE_ADDRESS = 0x000E;
+        private const byte PLAYER_STATE_LEFTMOST_OF_SCREEN = 0x00;
+        private const byte PLAYER_STATE_DIED = 0x06;
+
+        private const ushort LEVEL_SCREEN_ADDRESS = 0x071A;
+
+        private const ushort AREA_LOADED_ADDRESS = 0x0750;
+        private const ushort AREA_LOADED_VALUE = 0x22A2;
+
+        private const ushort PLAYER_SIZE_STATE_ADDRESS = 0x0754;
+        private const byte PLAYER_SIZE_STATE_BIG = 0x00;
+
+        private const ushort PLAYER_POWERUP_STATE_ADDRESS = 0x0756;
+        private const byte PLAYER_POWERUP_STATE_FIERY = 0x02;
+
+        private const ushort PLAYER_LIVES_ADDRESS = 0x075A;
+        private const ushort PLAYER_COINS_ADDRESS = 0x075E;
+        private const ushort WORLD_NUMBER_ADDRESS = 0x075F;
+        private const ushort LEVEL_NUMBER_ADDRESS = 0x0760;
+
+        private const ushort LEVEL_RESTART_TRIGGER_ADDRESS = 0x0772;
+        private const byte LEVEL_RESTART_TRIGGER_VALUE = 0x0;
+
+        private const ushort COINS_DIGITS_ADDRESS = 0x07ED;
+        private const ushort TIME_DIGITS_ADDRESS = 0x07F8;
+
+        private int saveStateIndex;
+        private List<string> saveStateFilenames;
+        private List<Tuple<byte, byte, byte>> checkpointScreens;
+
+        private void testToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //NesEmu.Write(PLAYER_SIZE_STATE_ADDRESS, PLAYER_SIZE_STATE_BIG);
+            //NesEmu.Write(PLAYER_POWERUP_STATE_ADDRESS, PLAYER_POWERUP_STATE_FIERY);
+
+            //byte[] areaLoadedValueBytes = BitConverter.GetBytes(AREA_LOADED_VALUE);
+            //NesEmu.Write(AREA_LOADED_ADDRESS, areaLoadedValueBytes[1]);
+            //NesEmu.Write((AREA_LOADED_ADDRESS + 1), areaLoadedValueBytes[0]);
+
+            //NesEmu.Write(PLAYER_LIVES_ADDRESS, 4);
+            //NesEmu.Write(PLAYER_COINS_ADDRESS, 90);
+            //NesEmu.Write(WORLD_NUMBER_ADDRESS, 3);
+            //NesEmu.Write(LEVEL_NUMBER_ADDRESS, 0);
+
+            //NesEmu.Write(COINS_DIGITS_ADDRESS, 9);
+            //NesEmu.Write((COINS_DIGITS_ADDRESS + 1), 0);
+
+            //NesEmu.Write(TIME_DIGITS_ADDRESS, 4);
+            //NesEmu.Write((TIME_DIGITS_ADDRESS + 1), 0);
+            //NesEmu.Write((TIME_DIGITS_ADDRESS + 2), 1);
+
+            //NesEmu.Write(LEVEL_RESTART_TRIGGER_ADDRESS, LEVEL_RESTART_TRIGGER_VALUE);
+
+            NesEmu.Write(PLAYER_SIZE_STATE_ADDRESS, PLAYER_SIZE_STATE_BIG);
+            NesEmu.Write(PLAYER_POWERUP_STATE_ADDRESS, PLAYER_POWERUP_STATE_FIERY);
+        }
+
+        private void test2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            NesEmu.Write(PLAYER_LIVES_ADDRESS, 5);
+            NesEmu.Write(PLAYER_COINS_ADDRESS, 90);
+
+            NesEmu.Write(COINS_DIGITS_ADDRESS, 9);
+            NesEmu.Write((COINS_DIGITS_ADDRESS + 1), 0);
+
+            NesEmu.Write(TIME_DIGITS_ADDRESS, 4);
+            NesEmu.Write((TIME_DIGITS_ADDRESS + 1), 0);
+            NesEmu.Write((TIME_DIGITS_ADDRESS + 2), 1);
+        }
+
+        private void FormMain_Load(object sender, EventArgs e)
+        {
+            saveStateIndex = 0;
+
+            saveStateFilenames = new List<string>();
+            saveStateFilenames.Add("World 1-1.mns");
+            saveStateFilenames.Add("World 1-1 (checkpoint).mns");
+            saveStateFilenames.Add("World 2-1.mns");
+            saveStateFilenames.Add("World 2-1 (checkpoint).mns");
+            saveStateFilenames.Add("World 3-1.mns");
+            saveStateFilenames.Add("World 3-1 (checkpoint).mns");
+            saveStateFilenames.Add("World 4-1.mns");
+            saveStateFilenames.Add("World 4-1 (checkpoint).mns");
+
+            checkpointScreens = new List<Tuple<byte, byte, byte>>();
+            checkpointScreens.Add(new Tuple<byte, byte, byte>(0, 0, 0x05));
+            checkpointScreens.Add(new Tuple<byte, byte, byte>(1, 0, 0x06));
+            checkpointScreens.Add(new Tuple<byte, byte, byte>(2, 0, 0x05));
+            checkpointScreens.Add(new Tuple<byte, byte, byte>(3, 0, 0x05));
+
+            NesEmu.WriteChangeTriggers = new Dictionary<ushort, Action<byte, byte>>();
+            NesEmu.WriteChangeTriggers.Add(PLAYER_STATE_ADDRESS, handlePlayerStateChangeTrigger);
+
+            OpenRom(@"Assets\Super Mario Bros..nes");
+
+            loadProperSaveState();
+        }
+
+        private void handlePlayerStateChangeTrigger(byte previousValue, byte newValue)
+        {
+            //ushort triggerAddress = 0x000E;
+            //Console.WriteLine("{0} | Memory Write Change | 0x{1}[{2}]: 0x{3}[{4}] -> 0x{5}[{6}]", DateTime.Now.Ticks, triggerAddress.ToString("X4"), triggerAddress, previousValue.ToString("X2"), previousValue, newValue.ToString("X2"), newValue);
+
+            if ((previousValue == PLAYER_STATE_DIED) && (newValue == PLAYER_STATE_LEFTMOST_OF_SCREEN))
+            {
+                byte worldNumber = NesEmu.WRAM[WORLD_NUMBER_ADDRESS & 0x7FF];
+                byte levelNumber = NesEmu.WRAM[LEVEL_NUMBER_ADDRESS & 0x7FF];
+                byte levelScreenNumber = NesEmu.WRAM[LEVEL_SCREEN_ADDRESS & 0x7FF];
+
+                byte checkpointLevelScreenNumber = (from cs in checkpointScreens where (cs.Item1 == worldNumber) && (cs.Item2 == levelNumber) select cs.Item3).FirstOrDefault();
+
+                if (checkpointLevelScreenNumber != 0)
+                {
+                    if (levelScreenNumber < checkpointLevelScreenNumber)
+                        saveStateIndex = (worldNumber * 2);
+                    else
+                        saveStateIndex = (worldNumber * 2) + 1;
+                }
+
+                loadProperSaveState();
+            }
+        }
+
+        private void loadProperSaveState()
+        {
+            NesEmu.EmulationPaused = true;            
+            NesEmu.LoadStateAs(@"Assets\" + saveStateFilenames[saveStateIndex]);
+            NesEmu.EmulationPaused = false;
+        }
+        //if (address == 0x072C || address == 0x071A || address == 0x071B)
+        //{
+        //Console.WriteLine("{0} | Memory Read | 0x{1}[{2}]: 0x{3}[{4}]", DateTime.Now.Ticks, address.ToString("X4"), address, value.ToString("X2"), value);
+        //}
+
+
+
+
+
+
+
+
+        
+
+        public void HandleWriteChangeTrigger(ushort triggerAddress, byte previousValue, byte newValue)
+        {
+            switch (triggerAddress)
+            {
+                case PLAYER_STATE_ADDRESS:
+                    if (newValue == PLAYER_STATE_DIED)
+                    {
+                        byte worldNumber2 = NesEmu.WRAM[WORLD_NUMBER_ADDRESS & 0x7FF];
+                        byte levelNumber2 = NesEmu.WRAM[LEVEL_NUMBER_ADDRESS & 0x7FF];
+                        byte levelScreenNumber = NesEmu.WRAM[LEVEL_SCREEN_ADDRESS & 0x7FF];
+
+                    }
+                    break;
+
+                case LEVEL_SCREEN_ADDRESS:
+                    byte worldNumber = NesEmu.WRAM[WORLD_NUMBER_ADDRESS & 0x7FF];
+                    byte levelNumber = NesEmu.WRAM[LEVEL_NUMBER_ADDRESS & 0x7FF];
+
+                    foreach (Tuple<byte, byte, byte> checkpointScreen in checkpointScreens)
+                    {
+                        if ((checkpointScreen.Item1 == worldNumber) && (checkpointScreen.Item2 == levelNumber))
+                        {
+                            if ((newValue == checkpointScreen.Item3) && (previousValue == (checkpointScreen.Item3 - 1)))
+                            {
+                                switch (checkpointScreen.Item1)
+                                {
+                                    case 0:
+                                        saveStateIndex = 1;
+                                        break;
+
+                                    case 1:
+                                        saveStateIndex = 3;
+                                        break;
+                                }
+                            }
+
+                            break;
+                        }
+                    }
+
+                    break;
+            }
+
+            Console.WriteLine("{0} | Memory Write Change | 0x{1}[{2}]: 0x{3}[{4}] -> 0x{5}[{6}]", DateTime.Now.Ticks, triggerAddress.ToString("X4"), triggerAddress, previousValue.ToString("X2"), previousValue, newValue.ToString("X2"), newValue);
+        }
     }
 }
