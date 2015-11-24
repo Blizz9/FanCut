@@ -1787,9 +1787,6 @@ namespace MyNes
 
         private void handlePlayerStateChangeTrigger(byte previousValue, byte newValue)
         {
-            //ushort triggerAddress = 0x000E;
-            //Console.WriteLine("{0} | Memory Write Change | 0x{1}[{2}]: 0x{3}[{4}] -> 0x{5}[{6}]", DateTime.Now.Ticks, triggerAddress.ToString("X4"), triggerAddress, previousValue.ToString("X2"), previousValue, newValue.ToString("X2"), newValue);
-
             if ((previousValue == PLAYER_STATE_DIED) && (newValue == PLAYER_STATE_LEFTMOST_OF_SCREEN))
             {
                 byte worldNumber = NesEmu.WRAM[WORLD_NUMBER_ADDRESS & 0x7FF];
@@ -1816,64 +1813,8 @@ namespace MyNes
             NesEmu.LoadStateAs(@"Assets\" + saveStateFilenames[saveStateIndex]);
             NesEmu.EmulationPaused = false;
         }
-        //if (address == 0x072C || address == 0x071A || address == 0x071B)
-        //{
+
+        //Console.WriteLine("{0} | Memory Write Change | 0x{1}[{2}]: 0x{3}[{4}] -> 0x{5}[{6}]", DateTime.Now.Ticks, triggerAddress.ToString("X4"), triggerAddress, previousValue.ToString("X2"), previousValue, newValue.ToString("X2"), newValue);
         //Console.WriteLine("{0} | Memory Read | 0x{1}[{2}]: 0x{3}[{4}]", DateTime.Now.Ticks, address.ToString("X4"), address, value.ToString("X2"), value);
-        //}
-
-
-
-
-
-
-
-
-        
-
-        public void HandleWriteChangeTrigger(ushort triggerAddress, byte previousValue, byte newValue)
-        {
-            switch (triggerAddress)
-            {
-                case PLAYER_STATE_ADDRESS:
-                    if (newValue == PLAYER_STATE_DIED)
-                    {
-                        byte worldNumber2 = NesEmu.WRAM[WORLD_NUMBER_ADDRESS & 0x7FF];
-                        byte levelNumber2 = NesEmu.WRAM[LEVEL_NUMBER_ADDRESS & 0x7FF];
-                        byte levelScreenNumber = NesEmu.WRAM[LEVEL_SCREEN_ADDRESS & 0x7FF];
-
-                    }
-                    break;
-
-                case LEVEL_SCREEN_ADDRESS:
-                    byte worldNumber = NesEmu.WRAM[WORLD_NUMBER_ADDRESS & 0x7FF];
-                    byte levelNumber = NesEmu.WRAM[LEVEL_NUMBER_ADDRESS & 0x7FF];
-
-                    foreach (Tuple<byte, byte, byte> checkpointScreen in checkpointScreens)
-                    {
-                        if ((checkpointScreen.Item1 == worldNumber) && (checkpointScreen.Item2 == levelNumber))
-                        {
-                            if ((newValue == checkpointScreen.Item3) && (previousValue == (checkpointScreen.Item3 - 1)))
-                            {
-                                switch (checkpointScreen.Item1)
-                                {
-                                    case 0:
-                                        saveStateIndex = 1;
-                                        break;
-
-                                    case 1:
-                                        saveStateIndex = 3;
-                                        break;
-                                }
-                            }
-
-                            break;
-                        }
-                    }
-
-                    break;
-            }
-
-            Console.WriteLine("{0} | Memory Write Change | 0x{1}[{2}]: 0x{3}[{4}] -> 0x{5}[{6}]", DateTime.Now.Ticks, triggerAddress.ToString("X4"), triggerAddress, previousValue.ToString("X2"), previousValue, newValue.ToString("X2"), newValue);
-        }
     }
 }
