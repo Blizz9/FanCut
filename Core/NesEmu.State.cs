@@ -76,6 +76,8 @@ namespace MyNes.Core
             // Create the stream
             Stream stream = new MemoryStream();
             BinaryWriter bin = new BinaryWriter(stream);
+            Stream stream2 = new MemoryStream();
+            BinaryWriter bin2 = new BinaryWriter(stream2);
             // Write header
             bin.Write(Encoding.ASCII.GetBytes("MNS"));// Write MNS (My Nes State)
             bin.Write(state_version);// Write version (1 byte)
@@ -174,6 +176,7 @@ namespace MyNes.Core
             #region Memory
             board.SaveState(bin);
             bin.Write(WRAM);
+            bin2.Write(WRAM);
             bin.Write(palettes_bank);
             bin.Write(oam_ram);
             bin.Write(oam_secondary);
@@ -328,10 +331,16 @@ namespace MyNes.Core
 
             // Compress data !
             byte[] outData = new byte[0];
-            ZlipWrapper.CompressData(((MemoryStream)bin.BaseStream).GetBuffer(), out outData);
+            //ZlipWrapper.CompressData(((MemoryStream)bin.BaseStream).GetBuffer(), out outData);
+            outData = ((MemoryStream)bin.BaseStream).GetBuffer();
             // Write file !
             Stream fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
             fileStream.Write(outData, 0, outData.Length);
+            byte[] outData2 = new byte[0];
+            outData2 = ((MemoryStream)bin2.BaseStream).GetBuffer();
+            // Write file !
+            Stream fileStream2 = new FileStream(fileName + ".wram", FileMode.Create, FileAccess.Write);
+            fileStream2.Write(outData2, 0, outData2.Length);
             // Save snapshot
             videoOut.TakeSnapshot(STATEFolder, Path.GetFileNameWithoutExtension(fileName), ".jpg", true);
 
@@ -371,11 +380,13 @@ namespace MyNes.Core
             // Read the file
             Stream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
             // Decompress
-            byte[] inData = new byte[stream.Length];
-            byte[] outData = new byte[0];
-            stream.Read(inData, 0, inData.Length);
+            //byte[] inData = new byte[stream.Length];
+            //byte[] outData = new byte[0];
+            //stream.Read(inData, 0, inData.Length);
+            byte[] outData = new byte[stream.Length];
+            stream.Read(outData, 0, outData.Length);
             stream.Close();
-            ZlipWrapper.DecompressData(inData, out outData);
+            //ZlipWrapper.DecompressData(inData, out outData);
 
             // Create the reader
             BinaryReader bin = new BinaryReader(new MemoryStream(outData));

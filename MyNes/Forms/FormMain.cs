@@ -1774,36 +1774,41 @@ namespace MyNes
             checkpointScreens = new List<Tuple<byte, byte, byte>>();
             checkpointScreens.Add(new Tuple<byte, byte, byte>(0, 0, 0x05));
             checkpointScreens.Add(new Tuple<byte, byte, byte>(1, 0, 0x06));
-            checkpointScreens.Add(new Tuple<byte, byte, byte>(2, 0, 0x05));
-            checkpointScreens.Add(new Tuple<byte, byte, byte>(3, 0, 0x05));
+            checkpointScreens.Add(new Tuple<byte, byte, byte>(2, 0, 0x06));
+            checkpointScreens.Add(new Tuple<byte, byte, byte>(3, 0, 0x06));
 
             NesEmu.WriteChangeTriggers = new Dictionary<ushort, Action<byte, byte>>();
             NesEmu.WriteChangeTriggers.Add(PLAYER_STATE_ADDRESS, handlePlayerStateChangeTrigger);
 
+            //NesEmu.WriteChangeTriggers.Add(AREA_LOADED_ADDRESS + 1, handleLevelScreenChangeTrigger);
+
             OpenRom(@"Assets\Super Mario Bros..nes");
 
-            loadProperSaveState();
+            //loadProperSaveState();
         }
 
         private void handlePlayerStateChangeTrigger(byte previousValue, byte newValue)
         {
             if ((previousValue == PLAYER_STATE_DIED) && (newValue == PLAYER_STATE_LEFTMOST_OF_SCREEN))
             {
-                byte worldNumber = NesEmu.WRAM[WORLD_NUMBER_ADDRESS & 0x7FF];
-                byte levelNumber = NesEmu.WRAM[LEVEL_NUMBER_ADDRESS & 0x7FF];
-                byte levelScreenNumber = NesEmu.WRAM[LEVEL_SCREEN_ADDRESS & 0x7FF];
+                NesEmu.EmulationPaused = true;
+                //NesEmu.SaveStateAs(@"Assets\test2.mns");
+                NesEmu.EmulationPaused = false;
+                //byte worldNumber = NesEmu.WRAM[WORLD_NUMBER_ADDRESS & 0x7FF];
+                //byte levelNumber = NesEmu.WRAM[LEVEL_NUMBER_ADDRESS & 0x7FF];
+                //byte levelScreenNumber = NesEmu.WRAM[LEVEL_SCREEN_ADDRESS & 0x7FF];
 
-                byte checkpointLevelScreenNumber = (from cs in checkpointScreens where (cs.Item1 == worldNumber) && (cs.Item2 == levelNumber) select cs.Item3).FirstOrDefault();
+                //byte checkpointLevelScreenNumber = (from cs in checkpointScreens where (cs.Item1 == worldNumber) && (cs.Item2 == levelNumber) select cs.Item3).FirstOrDefault();
 
-                if (checkpointLevelScreenNumber != 0)
-                {
-                    if (levelScreenNumber < checkpointLevelScreenNumber)
-                        saveStateIndex = (worldNumber * 2);
-                    else
-                        saveStateIndex = (worldNumber * 2) + 1;
-                }
+                //if (checkpointLevelScreenNumber != 0)
+                //{
+                //    if (levelScreenNumber < checkpointLevelScreenNumber)
+                //        saveStateIndex = (worldNumber * 2);
+                //    else
+                //        saveStateIndex = (worldNumber * 2) + 1;
+                //}
 
-                loadProperSaveState();
+                //loadProperSaveState();
             }
         }
 
@@ -1812,6 +1817,12 @@ namespace MyNes
             NesEmu.EmulationPaused = true;            
             NesEmu.LoadStateAs(@"Assets\" + saveStateFilenames[saveStateIndex]);
             NesEmu.EmulationPaused = false;
+        }
+
+        private void handleLevelScreenChangeTrigger(byte previousValue, byte newValue)
+        {
+            ushort triggerAddress = AREA_LOADED_ADDRESS + 1;
+            Console.WriteLine("{0} | Memory Write Change | 0x{1}[{2}]: 0x{3}[{4}] -> 0x{5}[{6}]", DateTime.Now.Ticks, triggerAddress.ToString("X4"), triggerAddress, previousValue.ToString("X2"), previousValue, newValue.ToString("X2"), newValue);
         }
 
         //Console.WriteLine("{0} | Memory Write Change | 0x{1}[{2}]: 0x{3}[{4}] -> 0x{5}[{6}]", DateTime.Now.Ticks, triggerAddress.ToString("X4"), triggerAddress, previousValue.ToString("X2"), previousValue, newValue.ToString("X2"), newValue);
