@@ -61,7 +61,7 @@ namespace MyNes
                 languageToolStripMenuItem.DropDownItems.Add(item);
             }
             this.Location = Program.Settings.WinLocation;
-            this.Size = Program.Settings.WinSize;
+            //this.Size = Program.Settings.WinSize;
             if (Program.Settings.LauncherShowAyAppStart)
                 launcherToolStripMenuItem_Click(this, null);
             RefreshRecent();
@@ -1029,7 +1029,7 @@ namespace MyNes
                 //    windowH += toolStrip1.Height;
                 //if (statusStrip1.Visible)
                 //    windowH += statusStrip1.Height;
-                this.Size = new Size(windowW, windowH);
+                //this.Size = new Size(windowW, windowH);
 
                 //MessageBox.Show("Surface size is "+panel_surface.Width +" x "+panel_surface.Height);
             }
@@ -1759,6 +1759,16 @@ namespace MyNes
 
         private void FormMain_Load(object sender, EventArgs e)
         {
+            saveState11PictureBox.Load(@"Assets\World 1-1.png");
+            saveState11cPictureBox.Load(@"Assets\World 1-1 (checkpoint).png");
+            saveState12PictureBox.Load(@"Assets\World 1-2.png");
+            saveState12cPictureBox.Load(@"Assets\World 1-2 (checkpoint).png");
+            saveState13PictureBox.Load(@"Assets\World 1-3.png");
+            saveState13cPictureBox.Load(@"Assets\World 1-3 (checkpoint).png");
+            saveState14PictureBox.Load(@"Assets\World 1-4.png");
+            saveState21PictureBox.Load(@"Assets\World 2-1.png");
+            saveState31PictureBox.Load(@"Assets\World 3-1.png");
+
             levels = new List<SMBLevel>();
 
             levels.Add(new SMBLevel() { Name = "World 1-1", WorldNumber = 0, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x25, CheckpointScreenNumber = 5 });
@@ -1795,9 +1805,9 @@ namespace MyNes
             //    saveStateStream.Write(saveState, 0, saveState.Length);
             //    saveStateStream.Close();
 
-            //    if (level.CheckpointFrameNumber != 0)
+            //    if (level.CheckpointScreenNumber != 0)
             //    {
-            //        saveState[WRAM_OFFSET + STARTING_LEVEL_SCREEN_ADDRESS] = level.CheckpointFrameNumber;
+            //        saveState[WRAM_OFFSET + STARTING_LEVEL_SCREEN_ADDRESS] = level.CheckpointScreenNumber;
 
             //        saveStateStream = new FileStream(@"Assets\" + level.Name + " (checkpoint).mns", FileMode.Create, FileAccess.Write);
             //        saveStateStream.Write(saveState, 0, saveState.Length);
@@ -1853,6 +1863,50 @@ namespace MyNes
         private void handleLevelNumberChangeTrigger(byte previousValue, byte newValue)
         {
             Console.WriteLine("{0} | Memory Write Change | Level Number[0x{1}]: 0x{2}[{3}] -> 0x{4}[{5}]", DateTime.Now.Ticks, LEVEL_NUMBER_ADDRESS.ToString("X4"), previousValue.ToString("X2"), previousValue, newValue.ToString("X2"), newValue);
+        }
+
+        private void saveState_Click(object sender, EventArgs e)
+        {
+            NesEmu.EmulationPaused = true;
+
+            if (sender == saveState11PictureBox)
+            {
+                NesEmu.LoadStateAs(@"Assets\World 1-1.mns");
+            }
+            else if (sender == saveState11cPictureBox)
+            {
+                NesEmu.LoadStateAs(@"Assets\World 1-1 (checkpoint).mns");
+            }
+            else if (sender == saveState12PictureBox)
+            {
+                NesEmu.LoadStateAs(@"Assets\World 1-2.mns");
+            }
+            else if (sender == saveState12cPictureBox)
+            {
+                NesEmu.LoadStateAs(@"Assets\World 1-2 (checkpoint).mns");
+            }
+            else if (sender == saveState13PictureBox)
+            {
+                NesEmu.LoadStateAs(@"Assets\World 1-3.mns");
+            }
+            else if (sender == saveState13cPictureBox)
+            {
+                NesEmu.LoadStateAs(@"Assets\World 1-3 (checkpoint).mns");
+            }
+            else if (sender == saveState14PictureBox)
+            {
+                NesEmu.LoadStateAs(@"Assets\World 1-4.mns");
+            }
+            else if (sender == saveState21PictureBox)
+            {
+                NesEmu.LoadStateAs(@"Assets\World 2-1.mns");
+            }
+            else if (sender == saveState31PictureBox)
+            {
+                NesEmu.LoadStateAs(@"Assets\World 3-1.mns");
+            }
+
+            NesEmu.EmulationPaused = false;
         }
 
         //Console.WriteLine("{0} | Memory Write Change | 0x{1}[{2}]: 0x{3}[{4}] -> 0x{5}[{6}]", DateTime.Now.Ticks, triggerAddress.ToString("X4"), triggerAddress, previousValue.ToString("X2"), previousValue, newValue.ToString("X2"), newValue);

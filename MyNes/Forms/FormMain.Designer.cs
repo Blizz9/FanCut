@@ -133,7 +133,38 @@ namespace MyNes
             this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutMyNesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel_surface = new System.Windows.Forms.Panel();
+            this.saveStatesGroupBox = new System.Windows.Forms.GroupBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.saveState13PictureBox = new System.Windows.Forms.PictureBox();
+            this.saveState12PictureBox = new System.Windows.Forms.PictureBox();
+            this.saveState11PictureBox = new System.Windows.Forms.PictureBox();
+            this.saveState14PictureBox = new System.Windows.Forms.PictureBox();
+            this.saveState11cPictureBox = new System.Windows.Forms.PictureBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.saveState12cPictureBox = new System.Windows.Forms.PictureBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.saveState13cPictureBox = new System.Windows.Forms.PictureBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.saveState21PictureBox = new System.Windows.Forms.PictureBox();
+            this.saveState31PictureBox = new System.Windows.Forms.PictureBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
+            this.saveStatesGroupBox.SuspendLayout();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState13PictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState12PictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState11PictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState14PictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState11cPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState12cPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState13cPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState21PictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState31PictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -737,10 +768,149 @@ namespace MyNes
             resources.ApplyResources(this.panel_surface, "panel_surface");
             this.panel_surface.Name = "panel_surface";
             // 
+            // saveStatesGroupBox
+            // 
+            this.saveStatesGroupBox.Controls.Add(this.panel1);
+            resources.ApplyResources(this.saveStatesGroupBox, "saveStatesGroupBox");
+            this.saveStatesGroupBox.Name = "saveStatesGroupBox";
+            this.saveStatesGroupBox.TabStop = false;
+            // 
+            // panel1
+            // 
+            resources.ApplyResources(this.panel1, "panel1");
+            this.panel1.Controls.Add(this.label9);
+            this.panel1.Controls.Add(this.label8);
+            this.panel1.Controls.Add(this.saveState31PictureBox);
+            this.panel1.Controls.Add(this.saveState21PictureBox);
+            this.panel1.Controls.Add(this.label7);
+            this.panel1.Controls.Add(this.saveState13cPictureBox);
+            this.panel1.Controls.Add(this.label6);
+            this.panel1.Controls.Add(this.saveState12cPictureBox);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.saveState11cPictureBox);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.saveState14PictureBox);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.saveState13PictureBox);
+            this.panel1.Controls.Add(this.saveState12PictureBox);
+            this.panel1.Controls.Add(this.saveState11PictureBox);
+            this.panel1.Name = "panel1";
+            // 
+            // label4
+            // 
+            resources.ApplyResources(this.label4, "label4");
+            this.label4.Name = "label4";
+            // 
+            // label3
+            // 
+            resources.ApplyResources(this.label3, "label3");
+            this.label3.Name = "label3";
+            // 
+            // label2
+            // 
+            resources.ApplyResources(this.label2, "label2");
+            this.label2.Name = "label2";
+            // 
+            // label1
+            // 
+            resources.ApplyResources(this.label1, "label1");
+            this.label1.Name = "label1";
+            // 
+            // saveState13PictureBox
+            // 
+            resources.ApplyResources(this.saveState13PictureBox, "saveState13PictureBox");
+            this.saveState13PictureBox.Name = "saveState13PictureBox";
+            this.saveState13PictureBox.TabStop = false;
+            this.saveState13PictureBox.Click += new System.EventHandler(this.saveState_Click);
+            // 
+            // saveState12PictureBox
+            // 
+            resources.ApplyResources(this.saveState12PictureBox, "saveState12PictureBox");
+            this.saveState12PictureBox.Name = "saveState12PictureBox";
+            this.saveState12PictureBox.TabStop = false;
+            this.saveState12PictureBox.Click += new System.EventHandler(this.saveState_Click);
+            // 
+            // saveState11PictureBox
+            // 
+            resources.ApplyResources(this.saveState11PictureBox, "saveState11PictureBox");
+            this.saveState11PictureBox.Name = "saveState11PictureBox";
+            this.saveState11PictureBox.TabStop = false;
+            this.saveState11PictureBox.Click += new System.EventHandler(this.saveState_Click);
+            // 
+            // saveState14PictureBox
+            // 
+            resources.ApplyResources(this.saveState14PictureBox, "saveState14PictureBox");
+            this.saveState14PictureBox.Name = "saveState14PictureBox";
+            this.saveState14PictureBox.TabStop = false;
+            this.saveState14PictureBox.Click += new System.EventHandler(this.saveState_Click);
+            // 
+            // saveState11cPictureBox
+            // 
+            resources.ApplyResources(this.saveState11cPictureBox, "saveState11cPictureBox");
+            this.saveState11cPictureBox.Name = "saveState11cPictureBox";
+            this.saveState11cPictureBox.TabStop = false;
+            this.saveState11cPictureBox.Click += new System.EventHandler(this.saveState_Click);
+            // 
+            // label5
+            // 
+            resources.ApplyResources(this.label5, "label5");
+            this.label5.Name = "label5";
+            // 
+            // saveState12cPictureBox
+            // 
+            resources.ApplyResources(this.saveState12cPictureBox, "saveState12cPictureBox");
+            this.saveState12cPictureBox.Name = "saveState12cPictureBox";
+            this.saveState12cPictureBox.TabStop = false;
+            this.saveState12cPictureBox.Click += new System.EventHandler(this.saveState_Click);
+            // 
+            // label6
+            // 
+            resources.ApplyResources(this.label6, "label6");
+            this.label6.Name = "label6";
+            // 
+            // saveState13cPictureBox
+            // 
+            resources.ApplyResources(this.saveState13cPictureBox, "saveState13cPictureBox");
+            this.saveState13cPictureBox.Name = "saveState13cPictureBox";
+            this.saveState13cPictureBox.TabStop = false;
+            this.saveState13cPictureBox.Click += new System.EventHandler(this.saveState_Click);
+            // 
+            // label7
+            // 
+            resources.ApplyResources(this.label7, "label7");
+            this.label7.Name = "label7";
+            // 
+            // saveState21PictureBox
+            // 
+            resources.ApplyResources(this.saveState21PictureBox, "saveState21PictureBox");
+            this.saveState21PictureBox.Name = "saveState21PictureBox";
+            this.saveState21PictureBox.TabStop = false;
+            this.saveState21PictureBox.Click += new System.EventHandler(this.saveState_Click);
+            // 
+            // saveState31PictureBox
+            // 
+            resources.ApplyResources(this.saveState31PictureBox, "saveState31PictureBox");
+            this.saveState31PictureBox.Name = "saveState31PictureBox";
+            this.saveState31PictureBox.TabStop = false;
+            this.saveState31PictureBox.Click += new System.EventHandler(this.saveState_Click);
+            // 
+            // label8
+            // 
+            resources.ApplyResources(this.label8, "label8");
+            this.label8.Name = "label8";
+            // 
+            // label9
+            // 
+            resources.ApplyResources(this.label9, "label9");
+            this.label9.Name = "label9";
+            // 
             // FormMain
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.saveStatesGroupBox);
             this.Controls.Add(this.panel_surface);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -753,6 +923,18 @@ namespace MyNes
             this.ResizeEnd += new System.EventHandler(this.FormMain_ResizeEnd);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.saveStatesGroupBox.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState13PictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState12PictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState11PictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState14PictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState11cPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState12cPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState13cPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState21PictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saveState31PictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -844,6 +1026,26 @@ namespace MyNes
         private System.Windows.Forms.ToolStripMenuItem statusToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showBoardsListToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator17;
+        private System.Windows.Forms.GroupBox saveStatesGroupBox;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.PictureBox saveState11PictureBox;
+        private System.Windows.Forms.PictureBox saveState13PictureBox;
+        private System.Windows.Forms.PictureBox saveState12PictureBox;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.PictureBox saveState14PictureBox;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.PictureBox saveState11cPictureBox;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.PictureBox saveState13cPictureBox;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.PictureBox saveState12cPictureBox;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.PictureBox saveState31PictureBox;
+        private System.Windows.Forms.PictureBox saveState21PictureBox;
     }
 }
 
