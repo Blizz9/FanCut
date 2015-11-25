@@ -76,8 +76,6 @@ namespace MyNes.Core
             // Create the stream
             Stream stream = new MemoryStream();
             BinaryWriter bin = new BinaryWriter(stream);
-            Stream stream2 = new MemoryStream();
-            BinaryWriter bin2 = new BinaryWriter(stream2);
             // Write header
             bin.Write(Encoding.ASCII.GetBytes("MNS"));// Write MNS (My Nes State)
             bin.Write(state_version);// Write version (1 byte)
@@ -176,7 +174,6 @@ namespace MyNes.Core
             #region Memory
             board.SaveState(bin);
             bin.Write(WRAM);
-            bin2.Write(WRAM);
             bin.Write(palettes_bank);
             bin.Write(oam_ram);
             bin.Write(oam_secondary);
@@ -336,11 +333,6 @@ namespace MyNes.Core
             // Write file !
             Stream fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write);
             fileStream.Write(outData, 0, outData.Length);
-            byte[] outData2 = new byte[0];
-            outData2 = ((MemoryStream)bin2.BaseStream).GetBuffer();
-            // Write file !
-            Stream fileStream2 = new FileStream(fileName + ".wram", FileMode.Create, FileAccess.Write);
-            fileStream2.Write(outData2, 0, outData2.Length);
             // Save snapshot
             videoOut.TakeSnapshot(STATEFolder, Path.GetFileNameWithoutExtension(fileName), ".jpg", true);
 

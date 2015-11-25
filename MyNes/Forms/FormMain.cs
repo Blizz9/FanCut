@@ -1691,11 +1691,6 @@ namespace MyNes
         private const byte PLAYER_STATE_LEFTMOST_OF_SCREEN = 0x00;
         private const byte PLAYER_STATE_DIED = 0x06;
 
-        private const ushort LEVEL_SCREEN_ADDRESS = 0x071A;
-
-        private const ushort AREA_LOADED_ADDRESS = 0x0750;
-        private const ushort AREA_LOADED_VALUE = 0x22A2;
-
         private const ushort PLAYER_SIZE_STATE_ADDRESS = 0x0754;
         private const byte PLAYER_SIZE_STATE_BIG = 0x00;
 
@@ -1704,18 +1699,23 @@ namespace MyNes
 
         private const ushort PLAYER_LIVES_ADDRESS = 0x075A;
         private const ushort PLAYER_COINS_ADDRESS = 0x075E;
+
         private const ushort WORLD_NUMBER_ADDRESS = 0x075F;
+        private const ushort LEVEL_DISPLAY_NUMBER_ADDRESS = 0x075C;
         private const ushort LEVEL_NUMBER_ADDRESS = 0x0760;
 
-        private const ushort LEVEL_RESTART_TRIGGER_ADDRESS = 0x0772;
-        private const byte LEVEL_RESTART_TRIGGER_VALUE = 0x0;
+        private const ushort LEVEL_SCREEN_ADDRESS = 0x071A;
+        private const ushort STARTING_LEVEL_SCREEN_ADDRESS = 0x075B;
+
+        private const ushort AREA_LOADED_ADDRESS = 0x0750;
 
         private const ushort COINS_DIGITS_ADDRESS = 0x07ED;
         private const ushort TIME_DIGITS_ADDRESS = 0x07F8;
 
-        private int saveStateIndex;
-        private List<string> saveStateFilenames;
-        private List<Tuple<byte, byte, byte>> checkpointScreens;
+        private const ushort LEVEL_RESTART_TRIGGER_ADDRESS = 0x0772;
+        private const byte LEVEL_RESTART_TRIGGER_VALUE = 0x0;
+
+        private List<SMBLevel> levels;
 
         private void testToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1759,73 +1759,113 @@ namespace MyNes
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            saveStateIndex = 0;
+            levels = new List<SMBLevel>();
 
-            saveStateFilenames = new List<string>();
-            saveStateFilenames.Add("World 1-1.mns");
-            saveStateFilenames.Add("World 1-1 (checkpoint).mns");
-            saveStateFilenames.Add("World 2-1.mns");
-            saveStateFilenames.Add("World 2-1 (checkpoint).mns");
-            saveStateFilenames.Add("World 3-1.mns");
-            saveStateFilenames.Add("World 3-1 (checkpoint).mns");
-            saveStateFilenames.Add("World 4-1.mns");
-            saveStateFilenames.Add("World 4-1 (checkpoint).mns");
+            levels.Add(new SMBLevel() { Name = "World 1-1", WorldNumber = 0, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x25, CheckpointScreenNumber = 5 });
+            levels.Add(new SMBLevel() { Name = "World 1-2", WorldNumber = 0, LevelDisplayNumber = 1, LevelNumber = 2, AreaLoadedValue = 0x40, CheckpointScreenNumber = 6 });
+            levels.Add(new SMBLevel() { Name = "World 1-3", WorldNumber = 0, LevelDisplayNumber = 2, LevelNumber = 3, AreaLoadedValue = 0x26, CheckpointScreenNumber = 4 });
+            levels.Add(new SMBLevel() { Name = "World 1-4", WorldNumber = 0, LevelDisplayNumber = 3, LevelNumber = 4, AreaLoadedValue = 0x60, CheckpointScreenNumber = 0 });
 
-            checkpointScreens = new List<Tuple<byte, byte, byte>>();
-            checkpointScreens.Add(new Tuple<byte, byte, byte>(0, 0, 0x05));
-            checkpointScreens.Add(new Tuple<byte, byte, byte>(1, 0, 0x06));
-            checkpointScreens.Add(new Tuple<byte, byte, byte>(2, 0, 0x06));
-            checkpointScreens.Add(new Tuple<byte, byte, byte>(3, 0, 0x06));
+            levels.Add(new SMBLevel() { Name = "World 2-1", WorldNumber = 1, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x28, CheckpointScreenNumber = 6 });
+            levels.Add(new SMBLevel() { Name = "World 3-1", WorldNumber = 2, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x24, CheckpointScreenNumber = 6 });
+
+            //foreach (SMBLevel level in levels)
+            //{
+            //    FileStream saveStateStream = new FileStream(@"Assets\base.mns", FileMode.Open, FileAccess.Read);
+            //    byte[] saveState = new byte[saveStateStream.Length];
+            //    saveStateStream.Read(saveState, 0, saveState.Length);
+            //    saveStateStream.Close();
+
+            //    const ushort WRAM_OFFSET = 0x510C;
+
+            //    saveState[WRAM_OFFSET + PLAYER_SIZE_STATE_ADDRESS] = PLAYER_SIZE_STATE_BIG;
+            //    saveState[WRAM_OFFSET + PLAYER_POWERUP_STATE_ADDRESS] = PLAYER_POWERUP_STATE_FIERY;
+
+            //    saveState[WRAM_OFFSET + PLAYER_LIVES_ADDRESS] = 4;
+            //    saveState[WRAM_OFFSET + PLAYER_COINS_ADDRESS] = 90;
+            //    saveState[WRAM_OFFSET + COINS_DIGITS_ADDRESS] = 9;
+            //    saveState[WRAM_OFFSET + COINS_DIGITS_ADDRESS + 1] = 0;
+
+            //    saveState[WRAM_OFFSET + WORLD_NUMBER_ADDRESS] = level.WorldNumber;
+            //    saveState[WRAM_OFFSET + LEVEL_DISPLAY_NUMBER_ADDRESS] = level.LevelDisplayNumber;
+            //    saveState[WRAM_OFFSET + LEVEL_NUMBER_ADDRESS] = level.LevelNumber;
+            //    saveState[WRAM_OFFSET + AREA_LOADED_ADDRESS] = level.AreaLoadedValue;
+
+            //    saveStateStream = new FileStream(@"Assets\" + level.Name + ".mns", FileMode.Create, FileAccess.Write);
+            //    saveStateStream.Write(saveState, 0, saveState.Length);
+            //    saveStateStream.Close();
+
+            //    if (level.CheckpointFrameNumber != 0)
+            //    {
+            //        saveState[WRAM_OFFSET + STARTING_LEVEL_SCREEN_ADDRESS] = level.CheckpointFrameNumber;
+
+            //        saveStateStream = new FileStream(@"Assets\" + level.Name + " (checkpoint).mns", FileMode.Create, FileAccess.Write);
+            //        saveStateStream.Write(saveState, 0, saveState.Length);
+            //        saveStateStream.Close();
+            //    }
+            //}
 
             NesEmu.WriteChangeTriggers = new Dictionary<ushort, Action<byte, byte>>();
             NesEmu.WriteChangeTriggers.Add(PLAYER_STATE_ADDRESS, handlePlayerStateChangeTrigger);
 
-            //NesEmu.WriteChangeTriggers.Add(AREA_LOADED_ADDRESS + 1, handleLevelScreenChangeTrigger);
+            //NesEmu.WriteChangeTriggers.Add(LEVEL_SCREEN_ADDRESS, handleLevelScreenChangeTrigger);
+            //NesEmu.WriteChangeTriggers.Add(LEVEL_NUMBER_ADDRESS, handleLevelNumberChangeTrigger);
 
             OpenRom(@"Assets\Super Mario Bros..nes");
 
-            //loadProperSaveState();
+            NesEmu.EmulationPaused = true;
+            NesEmu.LoadStateAs(@"Assets\World 1-1.mns");
+            NesEmu.EmulationPaused = false;
         }
 
         private void handlePlayerStateChangeTrigger(byte previousValue, byte newValue)
         {
             if ((previousValue == PLAYER_STATE_DIED) && (newValue == PLAYER_STATE_LEFTMOST_OF_SCREEN))
             {
-                NesEmu.EmulationPaused = true;
+                //NesEmu.EmulationPaused = true;
                 //NesEmu.SaveStateAs(@"Assets\test2.mns");
-                NesEmu.EmulationPaused = false;
-                //byte worldNumber = NesEmu.WRAM[WORLD_NUMBER_ADDRESS & 0x7FF];
-                //byte levelNumber = NesEmu.WRAM[LEVEL_NUMBER_ADDRESS & 0x7FF];
-                //byte levelScreenNumber = NesEmu.WRAM[LEVEL_SCREEN_ADDRESS & 0x7FF];
+                //NesEmu.EmulationPaused = false;
 
-                //byte checkpointLevelScreenNumber = (from cs in checkpointScreens where (cs.Item1 == worldNumber) && (cs.Item2 == levelNumber) select cs.Item3).FirstOrDefault();
+                byte worldNumber = NesEmu.WRAM[WORLD_NUMBER_ADDRESS & 0x7FF];
+                byte levelNumber = NesEmu.WRAM[LEVEL_NUMBER_ADDRESS & 0x7FF];
+                byte levelScreenNumber = NesEmu.WRAM[LEVEL_SCREEN_ADDRESS & 0x7FF];
 
-                //if (checkpointLevelScreenNumber != 0)
-                //{
-                //    if (levelScreenNumber < checkpointLevelScreenNumber)
-                //        saveStateIndex = (worldNumber * 2);
-                //    else
-                //        saveStateIndex = (worldNumber * 2) + 1;
-                //}
+                SMBLevel currentLevel = (from l in levels where (l.WorldNumber == worldNumber) && (l.LevelNumber == levelNumber) select l).FirstOrDefault();
+                if (currentLevel != null)
+                {
+                    string saveStateName = @"Assets\" + currentLevel.Name;
 
-                //loadProperSaveState();
+                    if ((currentLevel.CheckpointScreenNumber != 0) && (levelScreenNumber >= currentLevel.CheckpointScreenNumber))
+                        saveStateName += " (checkpoint)";
+
+                    NesEmu.EmulationPaused = true;
+                    NesEmu.LoadStateAs(saveStateName + ".mns");
+                    NesEmu.EmulationPaused = false;
+                }
             }
-        }
-
-        private void loadProperSaveState()
-        {
-            NesEmu.EmulationPaused = true;            
-            NesEmu.LoadStateAs(@"Assets\" + saveStateFilenames[saveStateIndex]);
-            NesEmu.EmulationPaused = false;
         }
 
         private void handleLevelScreenChangeTrigger(byte previousValue, byte newValue)
         {
-            ushort triggerAddress = AREA_LOADED_ADDRESS + 1;
-            Console.WriteLine("{0} | Memory Write Change | 0x{1}[{2}]: 0x{3}[{4}] -> 0x{5}[{6}]", DateTime.Now.Ticks, triggerAddress.ToString("X4"), triggerAddress, previousValue.ToString("X2"), previousValue, newValue.ToString("X2"), newValue);
+            Console.WriteLine("{0} | Memory Write Change | Level Screen[0x{1}]: 0x{2}[{3}] -> 0x{4}[{5}]", DateTime.Now.Ticks, LEVEL_SCREEN_ADDRESS.ToString("X4"), previousValue.ToString("X2"), previousValue, newValue.ToString("X2"), newValue);
+        }
+
+        private void handleLevelNumberChangeTrigger(byte previousValue, byte newValue)
+        {
+            Console.WriteLine("{0} | Memory Write Change | Level Number[0x{1}]: 0x{2}[{3}] -> 0x{4}[{5}]", DateTime.Now.Ticks, LEVEL_NUMBER_ADDRESS.ToString("X4"), previousValue.ToString("X2"), previousValue, newValue.ToString("X2"), newValue);
         }
 
         //Console.WriteLine("{0} | Memory Write Change | 0x{1}[{2}]: 0x{3}[{4}] -> 0x{5}[{6}]", DateTime.Now.Ticks, triggerAddress.ToString("X4"), triggerAddress, previousValue.ToString("X2"), previousValue, newValue.ToString("X2"), newValue);
         //Console.WriteLine("{0} | Memory Read | 0x{1}[{2}]: 0x{3}[{4}]", DateTime.Now.Ticks, address.ToString("X4"), address, value.ToString("X2"), value);
+    }
+
+    public class SMBLevel
+    {
+        public string Name { get; set; }
+        public byte WorldNumber { get; set; }
+        public byte LevelDisplayNumber { get; set; }
+        public byte LevelNumber { get; set; }
+        public byte AreaLoadedValue { get; set; }
+        public byte CheckpointScreenNumber { get; set; }
     }
 }
