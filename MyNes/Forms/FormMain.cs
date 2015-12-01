@@ -1687,6 +1687,16 @@ namespace MyNes
 
 
 
+        // TODO: Move all new source into separate class
+        // TODO: Add code to hard-reset before each save state load
+        // TODO: Add pictures for save states that don't have them
+        // TODO: Test on another windows machine to see if you still get music issues
+        // TODO: Add save state loading on completion of levels
+        // TODO: Don't save state until the user selects start
+        // TODO: Add message box support
+        // TODO: Add log ticker
+        // TODO: Add timeline highlight
+
         private const ushort PLAYER_STATE_ADDRESS = 0x000E;
         private const byte PLAYER_STATE_LEFTMOST_OF_SCREEN = 0x00;
         private const byte PLAYER_STATE_DIED = 0x06;
@@ -1716,6 +1726,7 @@ namespace MyNes
         private const byte LEVEL_RESTART_TRIGGER_VALUE = 0x0;
 
         private List<SMBLevel> levels;
+        private List<TimelineSave> timelineSaves;
 
         private void testToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1759,16 +1770,6 @@ namespace MyNes
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            saveState11PictureBox.Load(@"Assets\World 1-1.png");
-            saveState11cPictureBox.Load(@"Assets\World 1-1 (checkpoint).png");
-            saveState12PictureBox.Load(@"Assets\World 1-2.png");
-            saveState12cPictureBox.Load(@"Assets\World 1-2 (checkpoint).png");
-            saveState13PictureBox.Load(@"Assets\World 1-3.png");
-            saveState13cPictureBox.Load(@"Assets\World 1-3 (checkpoint).png");
-            saveState14PictureBox.Load(@"Assets\World 1-4.png");
-            saveState21PictureBox.Load(@"Assets\World 2-1.png");
-            saveState31PictureBox.Load(@"Assets\World 3-1.png");
-
             levels = new List<SMBLevel>();
 
             levels.Add(new SMBLevel() { Name = "World 1-1", WorldNumber = 0, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x25, CheckpointScreenNumber = 5 });
@@ -1777,7 +1778,39 @@ namespace MyNes
             levels.Add(new SMBLevel() { Name = "World 1-4", WorldNumber = 0, LevelDisplayNumber = 3, LevelNumber = 4, AreaLoadedValue = 0x60, CheckpointScreenNumber = 0 });
 
             levels.Add(new SMBLevel() { Name = "World 2-1", WorldNumber = 1, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x28, CheckpointScreenNumber = 6 });
+            levels.Add(new SMBLevel() { Name = "World 2-2", WorldNumber = 1, LevelDisplayNumber = 1, LevelNumber = 2, AreaLoadedValue = 0x01, CheckpointScreenNumber = 5 });
+            levels.Add(new SMBLevel() { Name = "World 2-3", WorldNumber = 1, LevelDisplayNumber = 2, LevelNumber = 3, AreaLoadedValue = 0x27, CheckpointScreenNumber = 7 });
+            levels.Add(new SMBLevel() { Name = "World 2-4", WorldNumber = 1, LevelDisplayNumber = 3, LevelNumber = 4, AreaLoadedValue = 0x62, CheckpointScreenNumber = 0 });
+
             levels.Add(new SMBLevel() { Name = "World 3-1", WorldNumber = 2, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x24, CheckpointScreenNumber = 6 });
+            levels.Add(new SMBLevel() { Name = "World 3-2", WorldNumber = 2, LevelDisplayNumber = 1, LevelNumber = 1, AreaLoadedValue = 0x35, CheckpointScreenNumber = 6 });
+            levels.Add(new SMBLevel() { Name = "World 3-3", WorldNumber = 2, LevelDisplayNumber = 2, LevelNumber = 2, AreaLoadedValue = 0x20, CheckpointScreenNumber = 4 });
+            levels.Add(new SMBLevel() { Name = "World 3-4", WorldNumber = 2, LevelDisplayNumber = 3, LevelNumber = 3, AreaLoadedValue = 0x63, CheckpointScreenNumber = 0 });
+
+            levels.Add(new SMBLevel() { Name = "World 4-1", WorldNumber = 3, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x22, CheckpointScreenNumber = 6 });
+            levels.Add(new SMBLevel() { Name = "World 4-2", WorldNumber = 3, LevelDisplayNumber = 1, LevelNumber = 2, AreaLoadedValue = 0x41, CheckpointScreenNumber = 6 });
+            levels.Add(new SMBLevel() { Name = "World 4-3", WorldNumber = 3, LevelDisplayNumber = 2, LevelNumber = 3, AreaLoadedValue = 0x2C, CheckpointScreenNumber = 4 });
+            levels.Add(new SMBLevel() { Name = "World 4-4", WorldNumber = 3, LevelDisplayNumber = 3, LevelNumber = 4, AreaLoadedValue = 0x61, CheckpointScreenNumber = 0 });
+
+            levels.Add(new SMBLevel() { Name = "World 5-1", WorldNumber = 4, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x2A, CheckpointScreenNumber = 6 });
+            levels.Add(new SMBLevel() { Name = "World 5-2", WorldNumber = 4, LevelDisplayNumber = 1, LevelNumber = 1, AreaLoadedValue = 0x31, CheckpointScreenNumber = 6 });
+            levels.Add(new SMBLevel() { Name = "World 5-3", WorldNumber = 4, LevelDisplayNumber = 2, LevelNumber = 2, AreaLoadedValue = 0x26, CheckpointScreenNumber = 4 });
+            levels.Add(new SMBLevel() { Name = "World 5-4", WorldNumber = 4, LevelDisplayNumber = 3, LevelNumber = 3, AreaLoadedValue = 0x62, CheckpointScreenNumber = 0 });
+
+            levels.Add(new SMBLevel() { Name = "World 6-1", WorldNumber = 5, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x2E, CheckpointScreenNumber = 6 });
+            levels.Add(new SMBLevel() { Name = "World 6-2", WorldNumber = 5, LevelDisplayNumber = 1, LevelNumber = 1, AreaLoadedValue = 0x23, CheckpointScreenNumber = 6 });
+            levels.Add(new SMBLevel() { Name = "World 6-3", WorldNumber = 5, LevelDisplayNumber = 2, LevelNumber = 2, AreaLoadedValue = 0x2D, CheckpointScreenNumber = 6 });
+            levels.Add(new SMBLevel() { Name = "World 6-4", WorldNumber = 5, LevelDisplayNumber = 3, LevelNumber = 3, AreaLoadedValue = 0x60, CheckpointScreenNumber = 0 });
+
+            levels.Add(new SMBLevel() { Name = "World 7-1", WorldNumber = 6, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x33, CheckpointScreenNumber = 6 });
+            levels.Add(new SMBLevel() { Name = "World 7-2", WorldNumber = 6, LevelDisplayNumber = 1, LevelNumber = 2, AreaLoadedValue = 0x01, CheckpointScreenNumber = 5 });
+            levels.Add(new SMBLevel() { Name = "World 7-3", WorldNumber = 6, LevelDisplayNumber = 2, LevelNumber = 3, AreaLoadedValue = 0x27, CheckpointScreenNumber = 7 });
+            levels.Add(new SMBLevel() { Name = "World 7-4", WorldNumber = 6, LevelDisplayNumber = 3, LevelNumber = 4, AreaLoadedValue = 0x64, CheckpointScreenNumber = 0 });
+
+            levels.Add(new SMBLevel() { Name = "World 8-1", WorldNumber = 7, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x30, CheckpointScreenNumber = 12 }); // no checkpoint in the actual game
+            levels.Add(new SMBLevel() { Name = "World 8-2", WorldNumber = 7, LevelDisplayNumber = 1, LevelNumber = 1, AreaLoadedValue = 0x32, CheckpointScreenNumber = 6 }); // no checkpoint in the actual game
+            levels.Add(new SMBLevel() { Name = "World 8-3", WorldNumber = 7, LevelDisplayNumber = 2, LevelNumber = 2, AreaLoadedValue = 0x21, CheckpointScreenNumber = 6 }); // no checkpoint in the actual game
+            levels.Add(new SMBLevel() { Name = "World 8-4", WorldNumber = 7, LevelDisplayNumber = 3, LevelNumber = 3, AreaLoadedValue = 0x65, CheckpointScreenNumber = 0 });
 
             //foreach (SMBLevel level in levels)
             //{
@@ -1804,6 +1837,7 @@ namespace MyNes
             //    saveStateStream = new FileStream(@"Assets\" + level.Name + ".mns", FileMode.Create, FileAccess.Write);
             //    saveStateStream.Write(saveState, 0, saveState.Length);
             //    saveStateStream.Close();
+            //    //File.Copy(@"Assets\blank.png", @"Assets\" + level.Name + ".png");
 
             //    if (level.CheckpointScreenNumber != 0)
             //    {
@@ -1812,19 +1846,72 @@ namespace MyNes
             //        saveStateStream = new FileStream(@"Assets\" + level.Name + " (checkpoint).mns", FileMode.Create, FileAccess.Write);
             //        saveStateStream.Write(saveState, 0, saveState.Length);
             //        saveStateStream.Close();
+            //        //File.Copy(@"Assets\blank.png", @"Assets\" + level.Name + " (checkpoint).png");
             //    }
             //}
+
+            timelineSaves = new List<TimelineSave>();
+            int index = 0;
+            foreach (SMBLevel level in levels)
+            {
+                TimelineSave timelineSave = new TimelineSave()
+                {
+                    ID = index,
+                    Name = level.Name,
+                    SaveStateName = level.Name + ".mns",
+                    ThumbnailName = level.Name + ".png"
+                };
+
+                timelineSaves.Add(timelineSave);
+                index++;
+
+                if (level.CheckpointScreenNumber != 0)
+                {
+                    timelineSave = new TimelineSave()
+                    {
+                        ID = index,
+                        Name = level.Name + " (checkpoint)",
+                        SaveStateName = level.Name + " (checkpoint).mns",
+                        ThumbnailName = level.Name + " (checkpoint).png"
+                    };
+
+                    timelineSaves.Add(timelineSave);
+                    index++;
+                }
+            }
+
+            const int MARGIN = 10;
+            const int SCREENSHOT_WIDTH = 256;
+            const int SCREENSHOT_HEIGHT = 224;
+
+            foreach (TimelineSave timelineSave in timelineSaves)
+            {
+                PictureBox saveStateImage = new PictureBox();
+                Label saveStateName = new Label();
+
+                saveStateImage.Size = new Size(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT);
+                saveStateImage.Location = new Point(MARGIN, (((MARGIN + SCREENSHOT_HEIGHT) * timelineSave.ID) + MARGIN));
+                saveStateImage.Load(@"Assets\" + timelineSave.ThumbnailName);
+                saveStateImage.Tag = timelineSave.ID;
+                saveStateImage.Click += new EventHandler(saveState_Click);
+                saveStatesPanel.Controls.Add(saveStateImage);
+
+                saveStateName.Size = new Size(100, 36);
+                saveStateName.Text = timelineSave.Name;
+                saveStateName.Location = new Point((MARGIN + SCREENSHOT_WIDTH + MARGIN), (((MARGIN + SCREENSHOT_HEIGHT) * timelineSave.ID) + MARGIN + MARGIN));
+                saveStatesPanel.Controls.Add(saveStateName);
+            }
 
             NesEmu.WriteChangeTriggers = new Dictionary<ushort, Action<byte, byte>>();
             NesEmu.WriteChangeTriggers.Add(PLAYER_STATE_ADDRESS, handlePlayerStateChangeTrigger);
 
-            //NesEmu.WriteChangeTriggers.Add(LEVEL_SCREEN_ADDRESS, handleLevelScreenChangeTrigger);
-            //NesEmu.WriteChangeTriggers.Add(LEVEL_NUMBER_ADDRESS, handleLevelNumberChangeTrigger);
+            NesEmu.WriteChangeTriggers.Add(LEVEL_SCREEN_ADDRESS, handleLevelScreenChangeTrigger);
+            NesEmu.WriteChangeTriggers.Add(LEVEL_NUMBER_ADDRESS, handleLevelNumberChangeTrigger);
 
             OpenRom(@"Assets\Super Mario Bros..nes");
 
             NesEmu.EmulationPaused = true;
-            NesEmu.LoadStateAs(@"Assets\World 1-1.mns");
+            NesEmu.LoadStateAs(@"Assets\" + timelineSaves.First().SaveStateName);
             NesEmu.EmulationPaused = false;
         }
 
@@ -1867,50 +1954,26 @@ namespace MyNes
 
         private void saveState_Click(object sender, EventArgs e)
         {
-            NesEmu.EmulationPaused = true;
+            TimelineSave timelineSave = (from ts in timelineSaves where ts.ID == (int)((Control)sender).Tag select ts).FirstOrDefault();
 
-            if (sender == saveState11PictureBox)
+            if (timelineSave != null)
             {
-                NesEmu.LoadStateAs(@"Assets\World 1-1.mns");
+                NesEmu.EmulationPaused = true;
+                NesEmu.LoadStateAs(@"Assets\" + timelineSave.SaveStateName);
+                NesEmu.EmulationPaused = false;
             }
-            else if (sender == saveState11cPictureBox)
-            {
-                NesEmu.LoadStateAs(@"Assets\World 1-1 (checkpoint).mns");
-            }
-            else if (sender == saveState12PictureBox)
-            {
-                NesEmu.LoadStateAs(@"Assets\World 1-2.mns");
-            }
-            else if (sender == saveState12cPictureBox)
-            {
-                NesEmu.LoadStateAs(@"Assets\World 1-2 (checkpoint).mns");
-            }
-            else if (sender == saveState13PictureBox)
-            {
-                NesEmu.LoadStateAs(@"Assets\World 1-3.mns");
-            }
-            else if (sender == saveState13cPictureBox)
-            {
-                NesEmu.LoadStateAs(@"Assets\World 1-3 (checkpoint).mns");
-            }
-            else if (sender == saveState14PictureBox)
-            {
-                NesEmu.LoadStateAs(@"Assets\World 1-4.mns");
-            }
-            else if (sender == saveState21PictureBox)
-            {
-                NesEmu.LoadStateAs(@"Assets\World 2-1.mns");
-            }
-            else if (sender == saveState31PictureBox)
-            {
-                NesEmu.LoadStateAs(@"Assets\World 3-1.mns");
-            }
-
-            NesEmu.EmulationPaused = false;
         }
 
         //Console.WriteLine("{0} | Memory Write Change | 0x{1}[{2}]: 0x{3}[{4}] -> 0x{5}[{6}]", DateTime.Now.Ticks, triggerAddress.ToString("X4"), triggerAddress, previousValue.ToString("X2"), previousValue, newValue.ToString("X2"), newValue);
         //Console.WriteLine("{0} | Memory Read | 0x{1}[{2}]: 0x{3}[{4}]", DateTime.Now.Ticks, address.ToString("X4"), address, value.ToString("X2"), value);
+    }
+
+    public class TimelineSave
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public string SaveStateName { get; set; }
+        public string ThumbnailName { get; set; }
     }
 
     public class SMBLevel
