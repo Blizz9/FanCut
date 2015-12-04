@@ -90,6 +90,10 @@ namespace MyNes.Core
         /// Raised when the emulation engine is initialized and ready to use.
         /// </summary>
         public static event EventHandler EMUInitialized;
+        /// <summary>
+        /// Raised when the emulation engine is finished hard resetting and ready to use.
+        /// </summary>
+        public static event EventHandler EMUHardReseted;
 
         /// <summary>
         /// Call this at application start up to set nes default stuff
@@ -249,6 +253,8 @@ namespace MyNes.Core
                         EmuStatus = EmulationStatus.HARDRESET;
                         request_hardReset = false;
                         hardReset();
+                        if (EMUHardReseted != null)
+                            EMUHardReseted(null, new EventArgs());
                         EmulationPaused = false;
                     }
                     if (request_softReset)

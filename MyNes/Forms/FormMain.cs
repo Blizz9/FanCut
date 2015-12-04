@@ -44,6 +44,7 @@ namespace MyNes
             InitializeSoundRenderer();
             InitializeInputRenderer();
             NesEmu.EMUShutdown += NesEmu_EMUShutdown;
+            NesEmu.EMUHardReseted += NesEmu_EMUHardReseted;
         }
 
         public DirectXVideo video;
@@ -1688,7 +1689,6 @@ namespace MyNes
 
 
         // TODO: Move all new source into separate class
-        // TODO: Add code to hard-reset before each save state load
         // TODO: Add pictures for save states that don't have them
         // TODO: Test on another windows machine to see if you still get music issues
         // TODO: Add save state loading on completion of levels
@@ -1727,6 +1727,9 @@ namespace MyNes
 
         private List<SMBLevel> levels;
         private List<TimelineSave> timelineSaves;
+
+        bool hardResettingPriorToLoadState = false;
+        string loadStateFilename;
 
         private void testToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1958,9 +1961,27 @@ namespace MyNes
 
             if (timelineSave != null)
             {
-                NesEmu.EmulationPaused = true;
-                NesEmu.LoadStateAs(@"Assets\" + timelineSave.SaveStateName);
-                NesEmu.EmulationPaused = false;
+                //NesEmu.EmulationPaused = true;
+                //NesEmu.LoadStateAs(@"Assets\" + timelineSave.SaveStateName);
+                //NesEmu.EmulationPaused = false;
+
+                loadStateFilename = @"Assets\" + timelineSave.SaveStateName;
+                hardResettingPriorToLoadState = true;
+                NesEmu.EMUHardReset();
+            }
+        }
+
+        private void NesEmu_EMUHardReseted(object sender, EventArgs e)
+        {
+            if (InvokeRequired)
+                Invoke(new Action(() => NesEmu_EMUHardReseted(sender, e)));
+            else
+            {
+                if (hardResettingPriorToLoadState)
+                {
+                    hardResettingPriorToLoadState = false;
+                    NesEmu.LoadStateAs(loadStateFilename);
+                }
             }
         }
 
