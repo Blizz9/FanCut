@@ -702,7 +702,7 @@ does it have issues ..etc</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="panel_surface.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 36</value>
@@ -723,7 +723,7 @@ does it have issues ..etc</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;panel_surface.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="saveStatesPanel.AutoScroll" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -777,6 +777,51 @@ does it have issues ..etc</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;saveStatesGroupBox.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="logListBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 19</value>
+  </data>
+  <data name="logListBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>506, 147</value>
+  </data>
+  <data name="logListBox.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;logListBox.Name" xml:space="preserve">
+    <value>logListBox</value>
+  </data>
+  <data name="&gt;&gt;logListBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;logListBox.Parent" xml:space="preserve">
+    <value>logGroupBox</value>
+  </data>
+  <data name="&gt;&gt;logListBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="logGroupBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 490</value>
+  </data>
+  <data name="logGroupBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>518, 176</value>
+  </data>
+  <data name="logGroupBox.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="logGroupBox.Text" xml:space="preserve">
+    <value>Log</value>
+  </data>
+  <data name="&gt;&gt;logGroupBox.Name" xml:space="preserve">
+    <value>logGroupBox</value>
+  </data>
+  <data name="&gt;&gt;logGroupBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;logGroupBox.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;logGroupBox.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
