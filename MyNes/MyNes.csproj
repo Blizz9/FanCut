@@ -77,6 +77,9 @@
     <Compile Include="Database\DateTimeFormater.cs" />
     <Compile Include="Database\HelperTools.cs" />
     <Compile Include="Database\MyNesDetectEntryInfo.cs" />
+    <Compile Include="FanCut.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\FormBoardsList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -282,6 +285,8 @@
     <Compile Include="Renderers\WaveRecorder.cs" />
     <Compile Include="Renderers\XInput\NesJoypadXControllerConnection.cs" />
     <Compile Include="Renderers\XInput\NesVSUnisystemDIPXControllerConnection.cs" />
+    <Compile Include="SMBLevel.cs" />
+    <Compile Include="TimelineSave.cs" />
     <EmbeddedResource Include="ControlSettings\InputControls\InputControlVSUnisystemDIP.ar-SY.resx">
       <DependentUpon>InputControlVSUnisystemDIP.cs</DependentUpon>
     </EmbeddedResource>
