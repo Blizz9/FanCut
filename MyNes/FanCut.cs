@@ -11,7 +11,7 @@ namespace MyNes
     internal class FanCut
     {
         // TODO: Add pictures for save states that don't have them
-        // TODO: Check finishing the game and if anything fucks up
+        // TODO: Do some with New Game+?
         // TODO: Implement save state injection here first? Not really required.
         // TODO: Add timeline highlights
         // TODO: Add SHA-1 check on the ROM
@@ -22,6 +22,7 @@ namespace MyNes
 
         // Things I Changed in virgin MyNES:
         // commented out some unused code that was causing compiler warnings
+        // fixed mess of build configurations
         // added a hard reset event to core
         // changed a few accessibility levels
         // added memory change trigger functionality
@@ -231,6 +232,7 @@ namespace MyNes
             timelinePanel.Size = new Size(494, 618);
             timelinePanel.Dock = DockStyle.Fill;
             timelinePanel.AutoScroll = true;
+            timelinePanel.Paint += onTimelinePanelPaint;
             timelineGroupBox.Controls.Add(timelinePanel);
 
             GroupBox logGroupBox = new GroupBox();
@@ -257,7 +259,6 @@ namespace MyNes
                 timelineSaveThumbnail.Click += new EventHandler(onTimelineSaveThumbnailClick);
 
                 timelinePanel.Controls.Add(timelineSaveThumbnail);
-                timelinePanel.Paint += onTimelinePanelPaint;
 
                 timelineSaveTitle.Size = new Size(100, 36);
                 timelineSaveTitle.Text = timelineSave.Name;
