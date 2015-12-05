@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace MyNes
 {
-    internal class FanCut
+    internal class FanCutSuperMarioBros
     {
         // TODO: Add pictures for save states that don't have them
         // TODO: Do some with New Game+?
@@ -19,6 +19,7 @@ namespace MyNes
         // TODO: Tell the user 2 players isnt supported
         // TODO: FanCut? - rename the containing folder based on this decision
         // TODO: Do a new checkout and do a final compare with the virgin mynes code
+        // TODO: copy blit_buf.dll on build
 
         // Things I Changed in virgin MyNES:
         // commented out some unused code that was causing compiler warnings
@@ -67,66 +68,66 @@ namespace MyNes
         private FormMain _formMain;
         private ListBox _logListBox;
 
-        private List<SMBLevel> _levels;
+        private List<SuperMarioBrosLevel> _levels;
         private List<TimelineSave> _timelineSaves;
 
         private bool _wasResetForTimelineLoad = false;
         private string _timelineSaveToLoad;
 
-        internal FanCut(FormMain formMain)
+        internal FanCutSuperMarioBros(FormMain formMain)
         {
             _formMain = formMain;
 
             NesEmu.EMUHardReseted += onCoreHardReseted;
 
-            _levels = new List<SMBLevel>();
+            _levels = new List<SuperMarioBrosLevel>();
 
-            _levels.Add(new SMBLevel() { Name = "World 1-1", WorldNumber = 0, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x25, CheckpointScreenNumber = 5 });
-            _levels.Add(new SMBLevel() { Name = "World 1-2", WorldNumber = 0, LevelDisplayNumber = 1, LevelNumber = 2, AreaLoadedValue = 0x40, CheckpointScreenNumber = 6 });
-            _levels.Add(new SMBLevel() { Name = "World 1-3", WorldNumber = 0, LevelDisplayNumber = 2, LevelNumber = 3, AreaLoadedValue = 0x26, CheckpointScreenNumber = 4 });
-            _levels.Add(new SMBLevel() { Name = "World 1-4", WorldNumber = 0, LevelDisplayNumber = 3, LevelNumber = 4, AreaLoadedValue = 0x60, CheckpointScreenNumber = 0 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 1-1", WorldNumber = 0, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x25, CheckpointScreenNumber = 5 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 1-2", WorldNumber = 0, LevelDisplayNumber = 1, LevelNumber = 2, AreaLoadedValue = 0x40, CheckpointScreenNumber = 6 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 1-3", WorldNumber = 0, LevelDisplayNumber = 2, LevelNumber = 3, AreaLoadedValue = 0x26, CheckpointScreenNumber = 4 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 1-4", WorldNumber = 0, LevelDisplayNumber = 3, LevelNumber = 4, AreaLoadedValue = 0x60, CheckpointScreenNumber = 0 });
 
-            _levels.Add(new SMBLevel() { Name = "World 2-1", WorldNumber = 1, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x28, CheckpointScreenNumber = 6 });
-            _levels.Add(new SMBLevel() { Name = "World 2-2", WorldNumber = 1, LevelDisplayNumber = 1, LevelNumber = 2, AreaLoadedValue = 0x01, CheckpointScreenNumber = 5 });
-            _levels.Add(new SMBLevel() { Name = "World 2-3", WorldNumber = 1, LevelDisplayNumber = 2, LevelNumber = 3, AreaLoadedValue = 0x27, CheckpointScreenNumber = 7 });
-            _levels.Add(new SMBLevel() { Name = "World 2-4", WorldNumber = 1, LevelDisplayNumber = 3, LevelNumber = 4, AreaLoadedValue = 0x62, CheckpointScreenNumber = 0 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 2-1", WorldNumber = 1, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x28, CheckpointScreenNumber = 6 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 2-2", WorldNumber = 1, LevelDisplayNumber = 1, LevelNumber = 2, AreaLoadedValue = 0x01, CheckpointScreenNumber = 5 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 2-3", WorldNumber = 1, LevelDisplayNumber = 2, LevelNumber = 3, AreaLoadedValue = 0x27, CheckpointScreenNumber = 7 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 2-4", WorldNumber = 1, LevelDisplayNumber = 3, LevelNumber = 4, AreaLoadedValue = 0x62, CheckpointScreenNumber = 0 });
 
-            _levels.Add(new SMBLevel() { Name = "World 3-1", WorldNumber = 2, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x24, CheckpointScreenNumber = 6 });
-            _levels.Add(new SMBLevel() { Name = "World 3-2", WorldNumber = 2, LevelDisplayNumber = 1, LevelNumber = 1, AreaLoadedValue = 0x35, CheckpointScreenNumber = 6 });
-            _levels.Add(new SMBLevel() { Name = "World 3-3", WorldNumber = 2, LevelDisplayNumber = 2, LevelNumber = 2, AreaLoadedValue = 0x20, CheckpointScreenNumber = 4 });
-            _levels.Add(new SMBLevel() { Name = "World 3-4", WorldNumber = 2, LevelDisplayNumber = 3, LevelNumber = 3, AreaLoadedValue = 0x63, CheckpointScreenNumber = 0 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 3-1", WorldNumber = 2, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x24, CheckpointScreenNumber = 6 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 3-2", WorldNumber = 2, LevelDisplayNumber = 1, LevelNumber = 1, AreaLoadedValue = 0x35, CheckpointScreenNumber = 6 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 3-3", WorldNumber = 2, LevelDisplayNumber = 2, LevelNumber = 2, AreaLoadedValue = 0x20, CheckpointScreenNumber = 4 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 3-4", WorldNumber = 2, LevelDisplayNumber = 3, LevelNumber = 3, AreaLoadedValue = 0x63, CheckpointScreenNumber = 0 });
 
-            _levels.Add(new SMBLevel() { Name = "World 4-1", WorldNumber = 3, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x22, CheckpointScreenNumber = 6 });
-            _levels.Add(new SMBLevel() { Name = "World 4-2", WorldNumber = 3, LevelDisplayNumber = 1, LevelNumber = 2, AreaLoadedValue = 0x41, CheckpointScreenNumber = 6 });
-            _levels.Add(new SMBLevel() { Name = "World 4-3", WorldNumber = 3, LevelDisplayNumber = 2, LevelNumber = 3, AreaLoadedValue = 0x2C, CheckpointScreenNumber = 4 });
-            _levels.Add(new SMBLevel() { Name = "World 4-4", WorldNumber = 3, LevelDisplayNumber = 3, LevelNumber = 4, AreaLoadedValue = 0x61, CheckpointScreenNumber = 0 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 4-1", WorldNumber = 3, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x22, CheckpointScreenNumber = 6 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 4-2", WorldNumber = 3, LevelDisplayNumber = 1, LevelNumber = 2, AreaLoadedValue = 0x41, CheckpointScreenNumber = 6 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 4-3", WorldNumber = 3, LevelDisplayNumber = 2, LevelNumber = 3, AreaLoadedValue = 0x2C, CheckpointScreenNumber = 4 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 4-4", WorldNumber = 3, LevelDisplayNumber = 3, LevelNumber = 4, AreaLoadedValue = 0x61, CheckpointScreenNumber = 0 });
 
-            _levels.Add(new SMBLevel() { Name = "World 5-1", WorldNumber = 4, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x2A, CheckpointScreenNumber = 6 });
-            _levels.Add(new SMBLevel() { Name = "World 5-2", WorldNumber = 4, LevelDisplayNumber = 1, LevelNumber = 1, AreaLoadedValue = 0x31, CheckpointScreenNumber = 6 });
-            _levels.Add(new SMBLevel() { Name = "World 5-3", WorldNumber = 4, LevelDisplayNumber = 2, LevelNumber = 2, AreaLoadedValue = 0x26, CheckpointScreenNumber = 4 });
-            _levels.Add(new SMBLevel() { Name = "World 5-4", WorldNumber = 4, LevelDisplayNumber = 3, LevelNumber = 3, AreaLoadedValue = 0x62, CheckpointScreenNumber = 0 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 5-1", WorldNumber = 4, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x2A, CheckpointScreenNumber = 6 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 5-2", WorldNumber = 4, LevelDisplayNumber = 1, LevelNumber = 1, AreaLoadedValue = 0x31, CheckpointScreenNumber = 6 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 5-3", WorldNumber = 4, LevelDisplayNumber = 2, LevelNumber = 2, AreaLoadedValue = 0x26, CheckpointScreenNumber = 4 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 5-4", WorldNumber = 4, LevelDisplayNumber = 3, LevelNumber = 3, AreaLoadedValue = 0x62, CheckpointScreenNumber = 0 });
 
-            _levels.Add(new SMBLevel() { Name = "World 6-1", WorldNumber = 5, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x2E, CheckpointScreenNumber = 6 });
-            _levels.Add(new SMBLevel() { Name = "World 6-2", WorldNumber = 5, LevelDisplayNumber = 1, LevelNumber = 1, AreaLoadedValue = 0x23, CheckpointScreenNumber = 6 });
-            _levels.Add(new SMBLevel() { Name = "World 6-3", WorldNumber = 5, LevelDisplayNumber = 2, LevelNumber = 2, AreaLoadedValue = 0x2D, CheckpointScreenNumber = 6 });
-            _levels.Add(new SMBLevel() { Name = "World 6-4", WorldNumber = 5, LevelDisplayNumber = 3, LevelNumber = 3, AreaLoadedValue = 0x60, CheckpointScreenNumber = 0 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 6-1", WorldNumber = 5, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x2E, CheckpointScreenNumber = 6 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 6-2", WorldNumber = 5, LevelDisplayNumber = 1, LevelNumber = 1, AreaLoadedValue = 0x23, CheckpointScreenNumber = 6 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 6-3", WorldNumber = 5, LevelDisplayNumber = 2, LevelNumber = 2, AreaLoadedValue = 0x2D, CheckpointScreenNumber = 6 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 6-4", WorldNumber = 5, LevelDisplayNumber = 3, LevelNumber = 3, AreaLoadedValue = 0x60, CheckpointScreenNumber = 0 });
 
-            _levels.Add(new SMBLevel() { Name = "World 7-1", WorldNumber = 6, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x33, CheckpointScreenNumber = 6 });
-            _levels.Add(new SMBLevel() { Name = "World 7-2", WorldNumber = 6, LevelDisplayNumber = 1, LevelNumber = 2, AreaLoadedValue = 0x01, CheckpointScreenNumber = 5 });
-            _levels.Add(new SMBLevel() { Name = "World 7-3", WorldNumber = 6, LevelDisplayNumber = 2, LevelNumber = 3, AreaLoadedValue = 0x27, CheckpointScreenNumber = 7 });
-            _levels.Add(new SMBLevel() { Name = "World 7-4", WorldNumber = 6, LevelDisplayNumber = 3, LevelNumber = 4, AreaLoadedValue = 0x64, CheckpointScreenNumber = 0 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 7-1", WorldNumber = 6, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x33, CheckpointScreenNumber = 6 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 7-2", WorldNumber = 6, LevelDisplayNumber = 1, LevelNumber = 2, AreaLoadedValue = 0x01, CheckpointScreenNumber = 5 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 7-3", WorldNumber = 6, LevelDisplayNumber = 2, LevelNumber = 3, AreaLoadedValue = 0x27, CheckpointScreenNumber = 7 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 7-4", WorldNumber = 6, LevelDisplayNumber = 3, LevelNumber = 4, AreaLoadedValue = 0x64, CheckpointScreenNumber = 0 });
 
-            _levels.Add(new SMBLevel() { Name = "World 8-1", WorldNumber = 7, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x30, CheckpointScreenNumber = 12 }); // no checkpoint in the actual game
-            _levels.Add(new SMBLevel() { Name = "World 8-2", WorldNumber = 7, LevelDisplayNumber = 1, LevelNumber = 1, AreaLoadedValue = 0x32, CheckpointScreenNumber = 6 }); // no checkpoint in the actual game
-            _levels.Add(new SMBLevel() { Name = "World 8-3", WorldNumber = 7, LevelDisplayNumber = 2, LevelNumber = 2, AreaLoadedValue = 0x21, CheckpointScreenNumber = 6 }); // no checkpoint in the actual game
-            _levels.Add(new SMBLevel() { Name = "World 8-4", WorldNumber = 7, LevelDisplayNumber = 3, LevelNumber = 3, AreaLoadedValue = 0x65, CheckpointScreenNumber = 0 });
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 8-1", WorldNumber = 7, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x30, CheckpointScreenNumber = 12 }); // no checkpoint in the actual game
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 8-2", WorldNumber = 7, LevelDisplayNumber = 1, LevelNumber = 1, AreaLoadedValue = 0x32, CheckpointScreenNumber = 6 }); // no checkpoint in the actual game
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 8-3", WorldNumber = 7, LevelDisplayNumber = 2, LevelNumber = 2, AreaLoadedValue = 0x21, CheckpointScreenNumber = 6 }); // no checkpoint in the actual game
+            _levels.Add(new SuperMarioBrosLevel() { Name = "World 8-4", WorldNumber = 7, LevelDisplayNumber = 3, LevelNumber = 3, AreaLoadedValue = 0x65, CheckpointScreenNumber = 0 });
             
             // this will override all the current saves, only do this when regenerating saves
             //createTimelineSaves();
 
             _timelineSaves = new List<TimelineSave>();
             int index = 0;
-            foreach (SMBLevel level in _levels)
+            foreach (SuperMarioBrosLevel level in _levels)
             {
                 TimelineSave timelineSave = new TimelineSave()
                 {
@@ -169,7 +170,7 @@ namespace MyNes
 
         private void createTimelineSaves()
         {
-            foreach (SMBLevel level in _levels)
+            foreach (SuperMarioBrosLevel level in _levels)
             {
                 FileStream saveStateStream = new FileStream(@"Assets\base.mns", FileMode.Open, FileAccess.Read);
                 byte[] saveState = new byte[saveStateStream.Length];
@@ -306,7 +307,7 @@ namespace MyNes
                 byte levelNumber = NesEmu.WRAM[LEVEL_NUMBER_ADDRESS & 0x7FF];
                 byte levelScreenNumber = NesEmu.WRAM[LEVEL_SCREEN_ADDRESS & 0x7FF];
 
-                SMBLevel currentLevel = (from l in _levels where (l.WorldNumber == worldNumber) && (l.LevelNumber == levelNumber) select l).FirstOrDefault();
+                SuperMarioBrosLevel currentLevel = (from l in _levels where (l.WorldNumber == worldNumber) && (l.LevelNumber == levelNumber) select l).FirstOrDefault();
                 if (currentLevel != null)
                 {
                     bool isPastCheckpoint = (currentLevel.CheckpointScreenNumber != 0) && (levelScreenNumber >= currentLevel.CheckpointScreenNumber);
@@ -342,11 +343,11 @@ namespace MyNes
 
         private void loadTimelineSaveOnLevelCompletion(byte worldNumber, byte levelNumber)
         {
-            SMBLevel currentLevel = (from l in _levels where (l.WorldNumber == worldNumber) && (l.LevelNumber == levelNumber) select l).FirstOrDefault();
+            SuperMarioBrosLevel currentLevel = (from l in _levels where (l.WorldNumber == worldNumber) && (l.LevelNumber == levelNumber) select l).FirstOrDefault();
             if (currentLevel != null)
                 if (_levels.IndexOf(currentLevel) != 0)
                 {
-                    SMBLevel previousLevel = _levels[_levels.IndexOf(currentLevel) - 1];
+                    SuperMarioBrosLevel previousLevel = _levels[_levels.IndexOf(currentLevel) - 1];
 
                     writeLogMessage(string.Format("Detected completion of {0}", previousLevel.Name));
 
@@ -420,5 +421,15 @@ namespace MyNes
         }
 
         #endregion
+    }
+
+    internal class SuperMarioBrosLevel
+    {
+        internal string Name { get; set; }
+        internal byte WorldNumber { get; set; }
+        internal byte LevelDisplayNumber { get; set; }
+        internal byte LevelNumber { get; set; }
+        internal byte AreaLoadedValue { get; set; }
+        internal byte CheckpointScreenNumber { get; set; }
     }
 }
