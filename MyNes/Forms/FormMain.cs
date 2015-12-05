@@ -1690,12 +1690,13 @@ namespace MyNes
 
         // TODO: Move all new source into separate class
         // TODO: Add pictures for save states that don't have them
+        // TODO: Check finishing the game and if anything fucks up
+        // TODO: Implement save state injection here first? Not really required.
         // TODO: Add timeline highlight
         // TODO: FanCut?
 
         private const ushort PLAYER_STATE_ADDRESS = 0x000E;
         private const byte PLAYER_STATE_LEFTMOST_OF_SCREEN = 0x00;
-        private const byte PLAYER_STATE_WALKING_INTO_CASTLE = 0x05;
         private const byte PLAYER_STATE_DIED = 0x06;
         private const byte PLAYER_STATE_NORMAL = 0x08;
 
