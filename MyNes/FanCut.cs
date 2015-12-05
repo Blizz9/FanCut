@@ -10,7 +10,6 @@ namespace MyNes
 {
     internal class FanCut
     {
-        // TODO: Move all new source into separate class
         // TODO: Add pictures for save states that don't have them
         // TODO: Check finishing the game and if anything fucks up
         // TODO: Implement save state injection here first? Not really required.
@@ -28,7 +27,11 @@ namespace MyNes
         // added memory change trigger functionality
         // commented out zlib compression on save states (for easier save state file analysis)
         // commented out support for acrobat reading of manual (so we don't need the library)
-        // ??? Some form main stuff ???
+        // Main Form:
+        //     Removed sizing based on settings
+        //     Added instantiation of FanCut on loaded
+        //     Added locking of window and play surface
+        //     Added injection of Timeline and Log into form
 
         #region Memory Locations and Values
 
@@ -61,6 +64,7 @@ namespace MyNes
         private const string CHECKPOINT_FILENAME_SUFFIX = " (checkpoint)";
 
         private FormMain _formMain;
+        private ListBox _logListBox;
 
         private List<SMBLevel> _levels;
         private List<TimelineSave> _timelineSaves;
@@ -149,7 +153,7 @@ namespace MyNes
                 }
             }
 
-            createTimelineControls();
+            layoutFormMain();
 
             NesEmu.ChangeTriggers = new List<ushort>();
             NesEmu.ChangeTriggers.Add(PLAYER_STATE_ADDRESS);
@@ -201,13 +205,45 @@ namespace MyNes
             }
         }
 
-        private void createTimelineControls()
+        private void layoutFormMain()
         {
             const int MARGIN = 10;
             const int THUMBNAIL_WIDTH = 256;
             const int THUMBNAIL_HEIGHT = 224;
-            const int TITLE_WIDTH = 100;
-            const int TITLE_HEIGHT = 36;
+
+            _formMain.Size = new Size(1048, 682);
+            _formMain.FormBorderStyle = FormBorderStyle.FixedSingle;
+            _formMain.MaximizeBox = false;
+
+            _formMain.panel_surface.Dock = DockStyle.None;
+            _formMain.panel_surface.Location = new Point(12, 36);
+            _formMain.panel_surface.Size = new Size(512, 448);
+
+            GroupBox timelineGroupBox = new GroupBox();
+            timelineGroupBox.Location = new Point(536, 26);
+            timelineGroupBox.Size = new Size(486, 608);
+            timelineGroupBox.Font = new Font("Arial", 12);
+            timelineGroupBox.Text = "Timeline";
+            _formMain.Controls.Add(timelineGroupBox);
+
+            Panel timelinePanel = new Panel();
+            timelinePanel.Location = new Point(3, 22);
+            timelinePanel.Size = new Size(494, 618);
+            timelinePanel.Dock = DockStyle.Fill;
+            timelinePanel.AutoScroll = true;
+            timelineGroupBox.Controls.Add(timelinePanel);
+
+            GroupBox logGroupBox = new GroupBox();
+            logGroupBox.Location = new Point(12, 490);
+            logGroupBox.Size = new Size(513, 144);
+            logGroupBox.Font = new Font("Arial", 12);
+            logGroupBox.Text = "Log";
+            _formMain.Controls.Add(logGroupBox);
+
+            _logListBox = new ListBox();
+            _logListBox.Location = new Point(6, 23);
+            _logListBox.Size = new Size(501, 125);
+            logGroupBox.Controls.Add(_logListBox);
 
             foreach (TimelineSave timelineSave in _timelineSaves)
             {
@@ -220,14 +256,14 @@ namespace MyNes
                 timelineSaveThumbnail.Tag = timelineSave.ID;
                 timelineSaveThumbnail.Click += new EventHandler(onTimelineSaveThumbnailClick);
 
-                _formMain.timelinePanel.Controls.Add(timelineSaveThumbnail);
-                _formMain.timelinePanel.Paint += onTimelinePanelPaint;
+                timelinePanel.Controls.Add(timelineSaveThumbnail);
+                timelinePanel.Paint += onTimelinePanelPaint;
 
-                timelineSaveTitle.Size = new Size(TITLE_WIDTH, TITLE_HEIGHT);
+                timelineSaveTitle.Size = new Size(100, 36);
                 timelineSaveTitle.Text = timelineSave.Name;
                 timelineSaveTitle.Location = new Point((MARGIN + THUMBNAIL_WIDTH + MARGIN), (((MARGIN + THUMBNAIL_HEIGHT) * timelineSave.ID) + MARGIN + MARGIN));
 
-                _formMain.timelinePanel.Controls.Add(timelineSaveTitle);
+                timelinePanel.Controls.Add(timelineSaveTitle);
             }
         }
 
@@ -376,9 +412,9 @@ namespace MyNes
                 _formMain.Invoke(new Action(() => writeLogMessage(message)));
             else
             {
-                _formMain.logListBox.Items.Add(message);
-                _formMain.logListBox.SelectedIndex = _formMain.logListBox.Items.Count - 1;
-                _formMain.logListBox.SelectedIndex = -1;
+                _logListBox.Items.Add(message);
+                _logListBox.SelectedIndex = _logListBox.Items.Count - 1;
+                _logListBox.SelectedIndex = -1;
             }
         }
 

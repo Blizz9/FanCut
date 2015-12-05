@@ -133,13 +133,7 @@ namespace MyNes
             this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutMyNesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel_surface = new System.Windows.Forms.Panel();
-            this.timelineGroupBox = new System.Windows.Forms.GroupBox();
-            this.timelinePanel = new System.Windows.Forms.Panel();
-            this.logGroupBox = new System.Windows.Forms.GroupBox();
-            this.logListBox = new System.Windows.Forms.ListBox();
             this.menuStrip1.SuspendLayout();
-            this.timelineGroupBox.SuspendLayout();
-            this.logGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -743,37 +737,10 @@ namespace MyNes
             resources.ApplyResources(this.panel_surface, "panel_surface");
             this.panel_surface.Name = "panel_surface";
             // 
-            // timelineGroupBox
-            // 
-            this.timelineGroupBox.Controls.Add(this.timelinePanel);
-            resources.ApplyResources(this.timelineGroupBox, "timelineGroupBox");
-            this.timelineGroupBox.Name = "timelineGroupBox";
-            this.timelineGroupBox.TabStop = false;
-            // 
-            // timelinePanel
-            // 
-            resources.ApplyResources(this.timelinePanel, "timelinePanel");
-            this.timelinePanel.Name = "timelinePanel";
-            // 
-            // logGroupBox
-            // 
-            this.logGroupBox.Controls.Add(this.logListBox);
-            resources.ApplyResources(this.logGroupBox, "logGroupBox");
-            this.logGroupBox.Name = "logGroupBox";
-            this.logGroupBox.TabStop = false;
-            // 
-            // logListBox
-            // 
-            this.logListBox.FormattingEnabled = true;
-            resources.ApplyResources(this.logListBox, "logListBox");
-            this.logListBox.Name = "logListBox";
-            // 
             // FormMain
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.logGroupBox);
-            this.Controls.Add(this.timelineGroupBox);
             this.Controls.Add(this.panel_surface);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -786,8 +753,6 @@ namespace MyNes
             this.ResizeEnd += new System.EventHandler(this.FormMain_ResizeEnd);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.timelineGroupBox.ResumeLayout(false);
-            this.logGroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -803,7 +768,7 @@ namespace MyNes
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewHelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutMyNesToolStripMenuItem;
-        private System.Windows.Forms.Panel panel_surface;
+        internal System.Windows.Forms.Panel panel_surface;
         private System.Windows.Forms.ToolStripMenuItem machinToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hardResetToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem softResetToolStripMenuItem;
@@ -879,10 +844,6 @@ namespace MyNes
         private System.Windows.Forms.ToolStripMenuItem statusToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showBoardsListToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator17;
-        private System.Windows.Forms.GroupBox timelineGroupBox;
-        internal System.Windows.Forms.Panel timelinePanel;
-        private System.Windows.Forms.GroupBox logGroupBox;
-        internal System.Windows.Forms.ListBox logListBox;
     }
 }
 
