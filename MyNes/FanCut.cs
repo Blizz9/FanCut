@@ -19,6 +19,16 @@ namespace MyNes
         // TODO: Move all save states to .ss, since they are really no longer mynes saves
         // TODO: Tell the user 2 players isnt supported
         // TODO: FanCut? - rename the containing folder based on this decision
+        // TODO: Do a new checkout and do a final compare with the virgin mynes code
+
+        // Things I Changed in virgin MyNES:
+        // commented out some unused code that was causing compiler warnings
+        // added a hard reset event to core
+        // changed a few accessibility levels
+        // added memory change trigger functionality
+        // commented out zlib compression on save states (for easier save state file analysis)
+        // commented out support for acrobat reading of manual (so we don't need the library)
+        // ??? Some form main stuff ???
 
         #region Memory Locations and Values
 
@@ -141,10 +151,11 @@ namespace MyNes
 
             createTimelineControls();
 
-            NesEmu.WriteChangeTriggers = new Dictionary<ushort, Action<byte, byte>>();
-            NesEmu.WriteChangeTriggers.Add(PLAYER_STATE_ADDRESS, onPlayerStateChanging);
-            NesEmu.WriteChangeTriggers.Add(WORLD_NUMBER_ADDRESS, onWorldNumberChanging);
-            NesEmu.WriteChangeTriggers.Add(LEVEL_NUMBER_ADDRESS, onLevelNumberChanging);
+            NesEmu.ChangeTriggers = new List<ushort>();
+            NesEmu.ChangeTriggers.Add(PLAYER_STATE_ADDRESS);
+            NesEmu.ChangeTriggers.Add(WORLD_NUMBER_ADDRESS);
+            NesEmu.ChangeTriggers.Add(LEVEL_NUMBER_ADDRESS);
+            NesEmu.ChangeTriggerHandler = onMemoryChanging;
 
             _formMain.OpenRom(@"Assets\Super Mario Bros..nes");
         }
@@ -223,6 +234,24 @@ namespace MyNes
         #endregion
 
         #region Change Trigger Handlers
+
+        private void onMemoryChanging(ushort address, byte previousValue, byte newValue)
+        {
+            switch (address)
+            {
+                case PLAYER_STATE_ADDRESS:
+                    onPlayerStateChanging(previousValue, newValue);
+                    break;
+
+                case WORLD_NUMBER_ADDRESS:
+                    onWorldNumberChanging(previousValue, newValue);
+                    break;
+
+                case LEVEL_NUMBER_ADDRESS:
+                    onLevelNumberChanging(previousValue, newValue);
+                    break;
+            }
+        }
 
         private void onPlayerStateChanging(byte previousValue, byte newValue)
         {

@@ -44,7 +44,8 @@ namespace MyNes.Core
         private static byte temp_4016;
         private static byte temp_4017;
 
-        public static Dictionary<ushort, Action<byte, byte>> WriteChangeTriggers;
+        public static List<ushort> ChangeTriggers;
+        public static Action<ushort, byte, byte> ChangeTriggerHandler;
 
         private static void MEMInitialize(IRom rom)
         {
@@ -306,7 +307,7 @@ namespace MyNes.Core
             // Should not reach here !
             return 0;
         }
-        public static void Write(int address, byte value)
+        private static void Write(int address, byte value)
         {
             BUS_RW_P = BUS_RW;
             BUS_ADDRESS = address;
@@ -316,16 +317,15 @@ namespace MyNes.Core
 
             if (address < 0x2000)// Internal 2K Work RAM (mirrored to 800h-1FFFh)
             {
-                if (WriteChangeTriggers != null)
-                {
-                    if (WriteChangeTriggers.ContainsKey((ushort)address))
+                if (ChangeTriggers != null)
+                    if (ChangeTriggers.Contains((ushort)address))
                     {
                         byte previousValue = WRAM[address & 0x7FF];
 
                         if (value != previousValue)
-                            WriteChangeTriggers[(ushort)address](previousValue, value);
+                            if (ChangeTriggerHandler != null)
+                                ChangeTriggerHandler((ushort)address, previousValue, value);
                     }
-                }
 
                 WRAM[address & 0x7FF] = value;
             }
