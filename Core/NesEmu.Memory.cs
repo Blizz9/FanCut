@@ -47,6 +47,9 @@ namespace MyNes.Core
         public static List<ushort> ChangeTriggers;
         public static Action<ushort, byte, byte> ChangeTriggerHandler;
 
+        public static List<ushort> ReadTriggers;
+        public static Action<ushort, byte> ReadTriggerHandler;
+
         private static void MEMInitialize(IRom rom)
         {
             // Find the mapper
@@ -149,6 +152,15 @@ namespace MyNes.Core
 
             if (address < 0x2000)// Internal 2K Work RAM (mirrored to 800h-1FFFh)
             {
+                //if (address == 0x009A) return (0xFB);
+
+                if (ReadTriggers != null)
+                    if (ReadTriggers.Contains((ushort)address))
+                    {
+                        if (ReadTriggerHandler != null)
+                            ReadTriggerHandler((ushort)address, WRAM[address & 0x7FF]);
+                    }
+
                 return WRAM[address & 0x7FF];
             }
             else if (address < 0x4000)

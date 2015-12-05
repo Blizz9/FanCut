@@ -20,6 +20,8 @@ namespace MyNes
         // TODO: FanCut? - rename the containing folder based on this decision
         // TODO: Do a new checkout and do a final compare with the virgin mynes code
         // TODO: copy blit_buf.dll on build
+        // TODO: move shared fancut logic to central area
+        // TODO: move assets to super mario bros dir
 
         // Things I Changed in virgin MyNES:
         // commented out some unused code that was causing compiler warnings
@@ -27,6 +29,7 @@ namespace MyNes
         // added a hard reset event to core
         // changed a few accessibility levels
         // added memory change trigger functionality
+        // added memory read trigger functionality
         // commented out zlib compression on save states (for easier save state file analysis)
         // commented out support for acrobat reading of manual (so we don't need the library)
         // Main Form:
