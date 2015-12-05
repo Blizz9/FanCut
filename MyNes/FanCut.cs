@@ -14,8 +14,11 @@ namespace MyNes
         // TODO: Add pictures for save states that don't have them
         // TODO: Check finishing the game and if anything fucks up
         // TODO: Implement save state injection here first? Not really required.
-        // TODO: Add timeline highlight
-        // TODO: FanCut?
+        // TODO: Add timeline highlights
+        // TODO: Add SHA-1 check on the ROM
+        // TODO: Move all save states to .ss, since they are really no longer mynes saves
+        // TODO: Tell the user 2 players isnt supported
+        // TODO: FanCut? - rename the containing folder based on this decision
 
         private const ushort PLAYER_STATE_ADDRESS = 0x000E;
         private const byte PLAYER_STATE_LEFTMOST_OF_SCREEN = 0x00;
@@ -30,67 +33,24 @@ namespace MyNes
 
         private const ushort PLAYER_LIVES_ADDRESS = 0x075A;
         private const ushort PLAYER_COINS_ADDRESS = 0x075E;
-
+        private const ushort COINS_DIGITS_ADDRESS = 0x07ED;
         private const ushort WORLD_NUMBER_ADDRESS = 0x075F;
         private const ushort LEVEL_DISPLAY_NUMBER_ADDRESS = 0x075C;
         private const ushort LEVEL_NUMBER_ADDRESS = 0x0760;
-
+        private const ushort LEVEL_CODE_ADDRESS = 0x0750;
         private const ushort LEVEL_SCREEN_ADDRESS = 0x071A;
         private const ushort STARTING_LEVEL_SCREEN_ADDRESS = 0x075B;
 
-        private const ushort AREA_LOADED_ADDRESS = 0x0750;
-
-        private const ushort COINS_DIGITS_ADDRESS = 0x07ED;
-        private const ushort TIME_DIGITS_ADDRESS = 0x07F8;
-
-        private const ushort LEVEL_RESTART_TRIGGER_ADDRESS = 0x0772;
-        private const byte LEVEL_RESTART_TRIGGER_VALUE = 0x0;
+        private const string ASSETS_PATH = "Assets";
+        private const string TIMELINE_SAVE_FILE_EXTENSION = ".mns";
+        private const string TIMELINE_SAVE_THUMBNAIL_FILE_EXTENSION = ".png";
+        private const string CHECKPOINT_FILENAME_SUFFIX = " (checkpoint)";
 
         private List<SMBLevel> _levels;
         private List<TimelineSave> _timelineSaves;
 
-        private bool _hardResettingPriorToLoadState = false;
-        private string _loadStateFilename;
-
-        private void testToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //NesEmu.Write(PLAYER_SIZE_STATE_ADDRESS, PLAYER_SIZE_STATE_BIG);
-            //NesEmu.Write(PLAYER_POWERUP_STATE_ADDRESS, PLAYER_POWERUP_STATE_FIERY);
-
-            //byte[] areaLoadedValueBytes = BitConverter.GetBytes(AREA_LOADED_VALUE);
-            //NesEmu.Write(AREA_LOADED_ADDRESS, areaLoadedValueBytes[1]);
-            //NesEmu.Write((AREA_LOADED_ADDRESS + 1), areaLoadedValueBytes[0]);
-
-            //NesEmu.Write(PLAYER_LIVES_ADDRESS, 4);
-            //NesEmu.Write(PLAYER_COINS_ADDRESS, 90);
-            //NesEmu.Write(WORLD_NUMBER_ADDRESS, 3);
-            //NesEmu.Write(LEVEL_NUMBER_ADDRESS, 0);
-
-            //NesEmu.Write(COINS_DIGITS_ADDRESS, 9);
-            //NesEmu.Write((COINS_DIGITS_ADDRESS + 1), 0);
-
-            //NesEmu.Write(TIME_DIGITS_ADDRESS, 4);
-            //NesEmu.Write((TIME_DIGITS_ADDRESS + 1), 0);
-            //NesEmu.Write((TIME_DIGITS_ADDRESS + 2), 1);
-
-            //NesEmu.Write(LEVEL_RESTART_TRIGGER_ADDRESS, LEVEL_RESTART_TRIGGER_VALUE);
-
-            NesEmu.Write(PLAYER_SIZE_STATE_ADDRESS, PLAYER_SIZE_STATE_BIG);
-            NesEmu.Write(PLAYER_POWERUP_STATE_ADDRESS, PLAYER_POWERUP_STATE_FIERY);
-        }
-
-        private void test2ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            NesEmu.Write(PLAYER_LIVES_ADDRESS, 5);
-            NesEmu.Write(PLAYER_COINS_ADDRESS, 90);
-
-            NesEmu.Write(COINS_DIGITS_ADDRESS, 9);
-            NesEmu.Write((COINS_DIGITS_ADDRESS + 1), 0);
-
-            NesEmu.Write(TIME_DIGITS_ADDRESS, 4);
-            NesEmu.Write((TIME_DIGITS_ADDRESS + 1), 0);
-            NesEmu.Write((TIME_DIGITS_ADDRESS + 2), 1);
-        }
+        private bool _wasResetForTimelineLoad = false;
+        private string _timelineSaveToLoad;
 
         private void FormMain_Load(object sender, EventArgs e)
         {
@@ -135,44 +95,9 @@ namespace MyNes
             _levels.Add(new SMBLevel() { Name = "World 8-2", WorldNumber = 7, LevelDisplayNumber = 1, LevelNumber = 1, AreaLoadedValue = 0x32, CheckpointScreenNumber = 6 }); // no checkpoint in the actual game
             _levels.Add(new SMBLevel() { Name = "World 8-3", WorldNumber = 7, LevelDisplayNumber = 2, LevelNumber = 2, AreaLoadedValue = 0x21, CheckpointScreenNumber = 6 }); // no checkpoint in the actual game
             _levels.Add(new SMBLevel() { Name = "World 8-4", WorldNumber = 7, LevelDisplayNumber = 3, LevelNumber = 3, AreaLoadedValue = 0x65, CheckpointScreenNumber = 0 });
-
-            //foreach (SMBLevel level in levels)
-            //{
-            //    FileStream saveStateStream = new FileStream(@"Assets\base.mns", FileMode.Open, FileAccess.Read);
-            //    byte[] saveState = new byte[saveStateStream.Length];
-            //    saveStateStream.Read(saveState, 0, saveState.Length);
-            //    saveStateStream.Close();
-
-            //    const ushort WRAM_OFFSET = 0x510C;
-
-            //    saveState[WRAM_OFFSET + PLAYER_SIZE_STATE_ADDRESS] = PLAYER_SIZE_STATE_BIG;
-            //    saveState[WRAM_OFFSET + PLAYER_POWERUP_STATE_ADDRESS] = PLAYER_POWERUP_STATE_FIERY;
-
-            //    saveState[WRAM_OFFSET + PLAYER_LIVES_ADDRESS] = 4;
-            //    saveState[WRAM_OFFSET + PLAYER_COINS_ADDRESS] = 90;
-            //    saveState[WRAM_OFFSET + COINS_DIGITS_ADDRESS] = 9;
-            //    saveState[WRAM_OFFSET + COINS_DIGITS_ADDRESS + 1] = 0;
-
-            //    saveState[WRAM_OFFSET + WORLD_NUMBER_ADDRESS] = level.WorldNumber;
-            //    saveState[WRAM_OFFSET + LEVEL_DISPLAY_NUMBER_ADDRESS] = level.LevelDisplayNumber;
-            //    saveState[WRAM_OFFSET + LEVEL_NUMBER_ADDRESS] = level.LevelNumber;
-            //    saveState[WRAM_OFFSET + AREA_LOADED_ADDRESS] = level.AreaLoadedValue;
-
-            //    saveStateStream = new FileStream(@"Assets\" + level.Name + ".mns", FileMode.Create, FileAccess.Write);
-            //    saveStateStream.Write(saveState, 0, saveState.Length);
-            //    saveStateStream.Close();
-            //    //File.Copy(@"Assets\blank.png", @"Assets\" + level.Name + ".png");
-
-            //    if (level.CheckpointScreenNumber != 0)
-            //    {
-            //        saveState[WRAM_OFFSET + STARTING_LEVEL_SCREEN_ADDRESS] = level.CheckpointScreenNumber;
-
-            //        saveStateStream = new FileStream(@"Assets\" + level.Name + " (checkpoint).mns", FileMode.Create, FileAccess.Write);
-            //        saveStateStream.Write(saveState, 0, saveState.Length);
-            //        saveStateStream.Close();
-            //        //File.Copy(@"Assets\blank.png", @"Assets\" + level.Name + " (checkpoint).png");
-            //    }
-            //}
+            
+            // this will override all the current saves, only do this when really sure
+            //createTimelineSaves();
 
             _timelineSaves = new List<TimelineSave>();
             int index = 0;
@@ -182,8 +107,8 @@ namespace MyNes
                 {
                     ID = index,
                     Name = level.Name,
-                    SaveStateName = level.Name + ".mns",
-                    ThumbnailName = level.Name + ".png"
+                    Filename = level.Name + TIMELINE_SAVE_FILE_EXTENSION,
+                    ThumbnailFilename = level.Name + TIMELINE_SAVE_THUMBNAIL_FILE_EXTENSION
                 };
 
                 _timelineSaves.Add(timelineSave);
@@ -194,9 +119,9 @@ namespace MyNes
                     timelineSave = new TimelineSave()
                     {
                         ID = index,
-                        Name = level.Name + " (checkpoint)",
-                        SaveStateName = level.Name + " (checkpoint).mns",
-                        ThumbnailName = level.Name + " (checkpoint).png"
+                        Name = level.Name + CHECKPOINT_FILENAME_SUFFIX,
+                        Filename = level.Name + CHECKPOINT_FILENAME_SUFFIX + TIMELINE_SAVE_FILE_EXTENSION,
+                        ThumbnailFilename = level.Name + CHECKPOINT_FILENAME_SUFFIX + TIMELINE_SAVE_THUMBNAIL_FILE_EXTENSION
                     };
 
                     _timelineSaves.Add(timelineSave);
@@ -204,57 +129,101 @@ namespace MyNes
                 }
             }
 
-            const int MARGIN = 10;
-            const int SCREENSHOT_WIDTH = 256;
-            const int SCREENSHOT_HEIGHT = 224;
-
-            foreach (TimelineSave timelineSave in _timelineSaves)
-            {
-                PictureBox saveStateImage = new PictureBox();
-                Label saveStateName = new Label();
-
-                saveStateImage.Size = new Size(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT);
-                saveStateImage.Location = new Point(MARGIN, (((MARGIN + SCREENSHOT_HEIGHT) * timelineSave.ID) + MARGIN));
-                saveStateImage.Load(@"Assets\" + timelineSave.ThumbnailName);
-                saveStateImage.Tag = timelineSave.ID;
-                saveStateImage.Click += new EventHandler(saveState_Click);
-                saveStatesPanel.Controls.Add(saveStateImage);
-                saveStatesPanel.Paint += saveStatesPanel_Paint;
-
-                saveStateName.Size = new Size(100, 36);
-                saveStateName.Text = timelineSave.Name;
-                saveStateName.Location = new Point((MARGIN + SCREENSHOT_WIDTH + MARGIN), (((MARGIN + SCREENSHOT_HEIGHT) * timelineSave.ID) + MARGIN + MARGIN));
-                saveStatesPanel.Controls.Add(saveStateName);
-            }
+            createTimelineControls();
 
             NesEmu.WriteChangeTriggers = new Dictionary<ushort, Action<byte, byte>>();
-            NesEmu.WriteChangeTriggers.Add(PLAYER_STATE_ADDRESS, handlePlayerStateChangeTrigger);
-
-            NesEmu.WriteChangeTriggers.Add(LEVEL_SCREEN_ADDRESS, handleLevelScreenChangeTrigger);
-            NesEmu.WriteChangeTriggers.Add(WORLD_NUMBER_ADDRESS, handleWorldNumberChangeTrigger);
-            NesEmu.WriteChangeTriggers.Add(LEVEL_NUMBER_ADDRESS, handleLevelNumberChangeTrigger);
+            NesEmu.WriteChangeTriggers.Add(PLAYER_STATE_ADDRESS, onPlayerStateChanging);
+            NesEmu.WriteChangeTriggers.Add(WORLD_NUMBER_ADDRESS, onWorldNumberChanging);
+            NesEmu.WriteChangeTriggers.Add(LEVEL_NUMBER_ADDRESS, onLevelNumberChanging);
 
             OpenRom(@"Assets\Super Mario Bros..nes");
         }
 
-        private void handlePlayerStateChangeTrigger(byte previousValue, byte newValue)
-        {
-            if ((previousValue == PLAYER_STATE_NORMAL) && (newValue == PLAYER_STATE_LEFTMOST_OF_SCREEN))
-                if (NesEmu.WRAM[PLAYER_LIVES_ADDRESS] == 2)
-                {
-                    writeLogMessage("# Detected player start, loading initial save state");
+        #region Initialization Routines
 
-                    NesEmu.EmulationPaused = true;
-                    NesEmu.LoadStateAs(@"Assets\" + _timelineSaves.First().SaveStateName);
-                    NesEmu.EmulationPaused = false;
+        private void createTimelineSaves()
+        {
+            foreach (SMBLevel level in _levels)
+            {
+                FileStream saveStateStream = new FileStream(@"Assets\base.mns", FileMode.Open, FileAccess.Read);
+                byte[] saveState = new byte[saveStateStream.Length];
+                saveStateStream.Read(saveState, 0, saveState.Length);
+                saveStateStream.Close();
+
+                const ushort WRAM_OFFSET = 0x510C;
+
+                saveState[WRAM_OFFSET + PLAYER_SIZE_STATE_ADDRESS] = PLAYER_SIZE_STATE_BIG;
+                saveState[WRAM_OFFSET + PLAYER_POWERUP_STATE_ADDRESS] = PLAYER_POWERUP_STATE_FIERY;
+
+                saveState[WRAM_OFFSET + PLAYER_LIVES_ADDRESS] = 4;
+                saveState[WRAM_OFFSET + PLAYER_COINS_ADDRESS] = 90;
+                saveState[WRAM_OFFSET + COINS_DIGITS_ADDRESS] = 9;
+                saveState[WRAM_OFFSET + COINS_DIGITS_ADDRESS + 1] = 0;
+
+                saveState[WRAM_OFFSET + WORLD_NUMBER_ADDRESS] = level.WorldNumber;
+                saveState[WRAM_OFFSET + LEVEL_DISPLAY_NUMBER_ADDRESS] = level.LevelDisplayNumber;
+                saveState[WRAM_OFFSET + LEVEL_NUMBER_ADDRESS] = level.LevelNumber;
+                saveState[WRAM_OFFSET + LEVEL_CODE_ADDRESS] = level.AreaLoadedValue;
+
+                saveStateStream = new FileStream(@"Assets\" + level.Name + ".mns", FileMode.Create, FileAccess.Write);
+                saveStateStream.Write(saveState, 0, saveState.Length);
+                saveStateStream.Close();
+
+                if (level.CheckpointScreenNumber != 0)
+                {
+                    saveState[WRAM_OFFSET + STARTING_LEVEL_SCREEN_ADDRESS] = level.CheckpointScreenNumber;
+
+                    saveStateStream = new FileStream(@"Assets\" + level.Name + " (checkpoint).mns", FileMode.Create, FileAccess.Write);
+                    saveStateStream.Write(saveState, 0, saveState.Length);
+                    saveStateStream.Close();
                 }
+            }
+        }
+
+        private void createTimelineControls()
+        {
+            const int MARGIN = 10;
+            const int THUMBNAIL_WIDTH = 256;
+            const int THUMBNAIL_HEIGHT = 224;
+            const int TITLE_WIDTH = 100;
+            const int TITLE_HEIGHT = 36;
+
+            foreach (TimelineSave timelineSave in _timelineSaves)
+            {
+                PictureBox timelineSaveThumbnail = new PictureBox();
+                Label timelineSaveTitle = new Label();
+
+                timelineSaveThumbnail.Size = new Size(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
+                timelineSaveThumbnail.Location = new Point(MARGIN, (((MARGIN + THUMBNAIL_HEIGHT) * timelineSave.ID) + MARGIN));
+                timelineSaveThumbnail.Load(Path.Combine(ASSETS_PATH, timelineSave.ThumbnailFilename));
+                timelineSaveThumbnail.Tag = timelineSave.ID;
+                timelineSaveThumbnail.Click += new EventHandler(onTimelineSaveThumbnailClick);
+                saveStatesPanel.Controls.Add(timelineSaveThumbnail);
+                saveStatesPanel.Paint += onTimelinePanelPaint;
+
+                timelineSaveTitle.Size = new Size(TITLE_WIDTH, TITLE_HEIGHT);
+                timelineSaveTitle.Text = timelineSave.Name;
+                timelineSaveTitle.Location = new Point((MARGIN + THUMBNAIL_WIDTH + MARGIN), (((MARGIN + THUMBNAIL_HEIGHT) * timelineSave.ID) + MARGIN + MARGIN));
+                saveStatesPanel.Controls.Add(timelineSaveTitle);
+            }
+        }
+
+        #endregion
+
+        #region Change Trigger Handlers
+
+        private void onPlayerStateChanging(byte previousValue, byte newValue)
+        {
+            byte playerLives = NesEmu.WRAM[PLAYER_LIVES_ADDRESS & 0x7FF];
+
+            if ((previousValue == PLAYER_STATE_NORMAL) && (newValue == PLAYER_STATE_LEFTMOST_OF_SCREEN) && (playerLives == 2))
+            {
+                writeLogMessage("Detected player start, loading first timeline save.");
+                resetThenLoadTimelineSave(_timelineSaves.First().Filename);
+            }
 
             if ((previousValue == PLAYER_STATE_DIED) && (newValue == PLAYER_STATE_LEFTMOST_OF_SCREEN))
             {
-                //NesEmu.EmulationPaused = true;
-                //NesEmu.SaveStateAs(@"Assets\test2.mns");
-                //NesEmu.EmulationPaused = false;
-
                 byte worldNumber = NesEmu.WRAM[WORLD_NUMBER_ADDRESS & 0x7FF];
                 byte levelNumber = NesEmu.WRAM[LEVEL_NUMBER_ADDRESS & 0x7FF];
                 byte levelScreenNumber = NesEmu.WRAM[LEVEL_SCREEN_ADDRESS & 0x7FF];
@@ -262,120 +231,91 @@ namespace MyNes
                 SMBLevel currentLevel = (from l in _levels where (l.WorldNumber == worldNumber) && (l.LevelNumber == levelNumber) select l).FirstOrDefault();
                 if (currentLevel != null)
                 {
-                    bool pastCheckpoint = (currentLevel.CheckpointScreenNumber != 0) && (levelScreenNumber >= currentLevel.CheckpointScreenNumber);
+                    bool isPastCheckpoint = (currentLevel.CheckpointScreenNumber != 0) && (levelScreenNumber >= currentLevel.CheckpointScreenNumber);
 
-                    writeLogMessage(string.Format("# Detected player death on {0}", currentLevel.Name) + (pastCheckpoint ? " (past checkpoint)" : string.Empty));
+                    string timelineSaveName = currentLevel.Name + (isPastCheckpoint ? CHECKPOINT_FILENAME_SUFFIX : string.Empty);
+                    string timelineSaveFilename = (from ts in _timelineSaves where ts.Name == timelineSaveName select ts.Filename).FirstOrDefault();
 
-                    string saveStateName = @"Assets\" + currentLevel.Name;
-
-                    if (pastCheckpoint)
-                        saveStateName += " (checkpoint)";
-
-                    //NesEmu.EmulationPaused = true;
-                    //NesEmu.LoadStateAs(saveStateName + ".mns");
-                    //NesEmu.EmulationPaused = false;
-
-                    _loadStateFilename = saveStateName + ".mns";
-                    _hardResettingPriorToLoadState = true;
-                    NesEmu.EMUHardReset();
+                    if (!string.IsNullOrWhiteSpace(timelineSaveFilename))
+                    {
+                        writeLogMessage(string.Format("Detected player death on {0}{1}.", currentLevel.Name, (isPastCheckpoint ? " (past checkpoint)" : string.Empty)));
+                        resetThenLoadTimelineSave(timelineSaveFilename);
+                    }
                 }
             }
         }
 
-        private void handleLevelScreenChangeTrigger(byte previousValue, byte newValue)
-        {
-            //Console.WriteLine("{0} | Memory Write Change | Level Screen[0x{1}]: 0x{2}[{3}] -> 0x{4}[{5}]", DateTime.Now.Ticks, LEVEL_SCREEN_ADDRESS.ToString("X4"), previousValue.ToString("X2"), previousValue, newValue.ToString("X2"), newValue);
-        }
-
-        private void handleWorldNumberChangeTrigger(byte previousValue, byte newValue)
+        private void onWorldNumberChanging(byte previousValue, byte newValue)
         {
             byte worldNumber = newValue;
             byte levelNumber = NesEmu.WRAM[LEVEL_NUMBER_ADDRESS & 0x7FF];
-
-            SMBLevel currentLevel = (from l in _levels where (l.WorldNumber == worldNumber) && (l.LevelNumber == levelNumber) select l).FirstOrDefault();
-            if (currentLevel != null)
-            {
-                SMBLevel previousLevel = _levels[_levels.IndexOf(currentLevel) - 1];
-                writeLogMessage(string.Format("# Detected level completion on {0}", previousLevel.Name));
-
-                string saveStateName = @"Assets\" + currentLevel.Name;
-
-                _loadStateFilename = saveStateName + ".mns";
-                _hardResettingPriorToLoadState = true;
-                NesEmu.EMUHardReset();
-            }
+            loadTimelineSaveOnLevelCompletion(worldNumber, levelNumber);
         }
 
-        private void handleLevelNumberChangeTrigger(byte previousValue, byte newValue)
+        private void onLevelNumberChanging(byte previousValue, byte newValue)
         {
             if (previousValue < newValue)
             {
                 byte worldNumber = NesEmu.WRAM[WORLD_NUMBER_ADDRESS & 0x7FF];
                 byte levelNumber = newValue;
+                loadTimelineSaveOnLevelCompletion(worldNumber, levelNumber);
+            }
+        }
 
-                SMBLevel currentLevel = (from l in _levels where (l.WorldNumber == worldNumber) && (l.LevelNumber == levelNumber) select l).FirstOrDefault();
-                if (currentLevel != null)
+        private void loadTimelineSaveOnLevelCompletion(byte worldNumber, byte levelNumber)
+        {
+            SMBLevel currentLevel = (from l in _levels where (l.WorldNumber == worldNumber) && (l.LevelNumber == levelNumber) select l).FirstOrDefault();
+            if (currentLevel != null)
+                if (_levels.IndexOf(currentLevel) != 0)
                 {
                     SMBLevel previousLevel = _levels[_levels.IndexOf(currentLevel) - 1];
-                    writeLogMessage(string.Format("# Detected level completion on {0}", previousLevel.Name));
 
-                    string saveStateName = @"Assets\" + currentLevel.Name;
+                    writeLogMessage(string.Format("Detected completion of {0}", previousLevel.Name));
 
-                    _loadStateFilename = saveStateName + ".mns";
-                    _hardResettingPriorToLoadState = true;
-                    NesEmu.EMUHardReset();
+                    resetThenLoadTimelineSave((from ts in _timelineSaves where ts.Name == currentLevel.Name select ts.Filename).First());
                 }
-            }
         }
 
-        private void saveState_Click(object sender, EventArgs e)
+        #endregion
+
+        #region Core Control Routines
+
+        private void resetThenLoadTimelineSave(string timelineSaveFilename)
         {
-            TimelineSave timelineSave = (from ts in _timelineSaves where ts.ID == (int)((Control)sender).Tag select ts).FirstOrDefault();
-
-            if (timelineSave != null)
-            {
-                //NesEmu.EmulationPaused = true;
-                //NesEmu.LoadStateAs(@"Assets\" + timelineSave.SaveStateName);
-                //NesEmu.EmulationPaused = false;
-
-                //NesEmu.EmulationPaused = true;
-                //MessageBox.Show("Would you like to move to the next timeline item?", "Suggestion", MessageBoxButtons.YesNo);
-                //NesEmu.EmulationPaused = false;
-
-                _loadStateFilename = @"Assets\" + timelineSave.SaveStateName;
-                _hardResettingPriorToLoadState = true;
-                NesEmu.EMUHardReset();
-            }
+            _timelineSaveToLoad = Path.Combine(ASSETS_PATH, timelineSaveFilename);
+            _wasResetForTimelineLoad = true;
+            NesEmu.EMUHardReset();
         }
 
-        private void writeLogMessage(string message)
-        {
-            if (InvokeRequired)
-                Invoke(new Action(() => writeLogMessage(message)));
-            else
-            {
-                logListBox.Items.Add(message);
-                logListBox.SelectedIndex = logListBox.Items.Count - 1;
-                logListBox.SelectedIndex = -1;
-            }
-        }
-
+        // ?????
         private void NesEmu_EMUHardReseted(object sender, EventArgs e)
         {
             if (InvokeRequired)
                 Invoke(new Action(() => NesEmu_EMUHardReseted(sender, e)));
             else
             {
-                if (_hardResettingPriorToLoadState)
+                if (_wasResetForTimelineLoad)
                 {
-                    _hardResettingPriorToLoadState = false;
-                    NesEmu.LoadStateAs(_loadStateFilename);
-                    writeLogMessage(string.Format("Loaded Save State: {0}", Path.GetFileNameWithoutExtension(_loadStateFilename)));
+                    _wasResetForTimelineLoad = false;
+                    NesEmu.LoadStateAs(_timelineSaveToLoad);
+                    writeLogMessage(string.Format("Loaded timeline save: {0}", Path.GetFileNameWithoutExtension(_timelineSaveToLoad)));
                 }
             }
         }
 
-        private void saveStatesPanel_Paint(object sender, PaintEventArgs e)
+        #endregion
+
+        #region UI Routines and Handlers
+
+        private void onTimelineSaveThumbnailClick(object sender, EventArgs e)
+        {
+            TimelineSave timelineSave = (from ts in _timelineSaves where ts.ID == (int)((Control)sender).Tag select ts).FirstOrDefault();
+
+            if (timelineSave != null)
+                resetThenLoadTimelineSave(timelineSave.Filename);
+        }
+
+        private void onTimelinePanelPaint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
 
@@ -390,24 +330,18 @@ namespace MyNes
             g.DrawLine(myPen, (temp.Location.X - 3), (temp.Location.Y + temp.Height + 3), (temp.Location.X + temp.Width + 3), (temp.Location.Y + temp.Height + 3));
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        // ?????
+        private void writeLogMessage(string message)
         {
-            base.OnPaint(e);
-
-            Control temp = saveStatesPanel.Controls[0];
-            Point locationOnForm = temp.FindForm().PointToClient(temp.Parent.PointToScreen(temp.Location));
-
-            Graphics g = e.Graphics;
-
-            Pen myPen = new Pen(Color.Red);
-            myPen.Width = 3;
-
-            //g.DrawLine(myPen, 30, 30, 45, 65);
-            //g.DrawLine(myPen, 1, 1, 45, 65);
-            g.DrawLine(myPen, locationOnForm.X - 3, locationOnForm.Y - 3, (locationOnForm.X + temp.Width + 3), locationOnForm.Y - 3);
+            if (InvokeRequired)
+                Invoke(new Action(() => writeLogMessage(message)));
+            else
+            {
+                logListBox.Items.Add(message);
+                logListBox.SelectedIndex = logListBox.Items.Count - 1;
+                logListBox.SelectedIndex = -1;
+            }
         }
-
-        //Console.WriteLine("{0} | Memory Write Change | 0x{1}[{2}]: 0x{3}[{4}] -> 0x{5}[{6}]", DateTime.Now.Ticks, triggerAddress.ToString("X4"), triggerAddress, previousValue.ToString("X2"), previousValue, newValue.ToString("X2"), newValue);
-        //Console.WriteLine("{0} | Memory Read | 0x{1}[{2}]: 0x{3}[{4}]", DateTime.Now.Ticks, address.ToString("X4"), address, value.ToString("X2"), value);
+        #endregion
     }
 }

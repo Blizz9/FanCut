@@ -4,7 +4,7 @@
     {
         internal int ID { get; set; }
         internal string Name { get; set; }
-        internal string SaveStateName { get; set; }
-        internal string ThumbnailName { get; set; }
+        internal string Filename { get; set; }
+        internal string ThumbnailFilename { get; set; }
     }
 }
