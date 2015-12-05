@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace MyNes
 {
-    public partial class FormMain
+    internal class FanCut
     {
         // TODO: Move all new source into separate class
         // TODO: Add pictures for save states that don't have them
@@ -19,6 +19,8 @@ namespace MyNes
         // TODO: Move all save states to .ss, since they are really no longer mynes saves
         // TODO: Tell the user 2 players isnt supported
         // TODO: FanCut? - rename the containing folder based on this decision
+
+        #region Memory Locations and Values
 
         private const ushort PLAYER_STATE_ADDRESS = 0x000E;
         private const byte PLAYER_STATE_LEFTMOST_OF_SCREEN = 0x00;
@@ -41,10 +43,14 @@ namespace MyNes
         private const ushort LEVEL_SCREEN_ADDRESS = 0x071A;
         private const ushort STARTING_LEVEL_SCREEN_ADDRESS = 0x075B;
 
+        #endregion
+
         private const string ASSETS_PATH = "Assets";
         private const string TIMELINE_SAVE_FILE_EXTENSION = ".mns";
         private const string TIMELINE_SAVE_THUMBNAIL_FILE_EXTENSION = ".png";
         private const string CHECKPOINT_FILENAME_SUFFIX = " (checkpoint)";
+
+        private FormMain _formMain;
 
         private List<SMBLevel> _levels;
         private List<TimelineSave> _timelineSaves;
@@ -52,8 +58,12 @@ namespace MyNes
         private bool _wasResetForTimelineLoad = false;
         private string _timelineSaveToLoad;
 
-        private void FormMain_Load(object sender, EventArgs e)
+        internal FanCut(FormMain formMain)
         {
+            _formMain = formMain;
+
+            NesEmu.EMUHardReseted += onCoreHardReseted;
+
             _levels = new List<SMBLevel>();
 
             _levels.Add(new SMBLevel() { Name = "World 1-1", WorldNumber = 0, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x25, CheckpointScreenNumber = 5 });
@@ -96,7 +106,7 @@ namespace MyNes
             _levels.Add(new SMBLevel() { Name = "World 8-3", WorldNumber = 7, LevelDisplayNumber = 2, LevelNumber = 2, AreaLoadedValue = 0x21, CheckpointScreenNumber = 6 }); // no checkpoint in the actual game
             _levels.Add(new SMBLevel() { Name = "World 8-4", WorldNumber = 7, LevelDisplayNumber = 3, LevelNumber = 3, AreaLoadedValue = 0x65, CheckpointScreenNumber = 0 });
             
-            // this will override all the current saves, only do this when really sure
+            // this will override all the current saves, only do this when regenerating saves
             //createTimelineSaves();
 
             _timelineSaves = new List<TimelineSave>();
@@ -136,7 +146,7 @@ namespace MyNes
             NesEmu.WriteChangeTriggers.Add(WORLD_NUMBER_ADDRESS, onWorldNumberChanging);
             NesEmu.WriteChangeTriggers.Add(LEVEL_NUMBER_ADDRESS, onLevelNumberChanging);
 
-            OpenRom(@"Assets\Super Mario Bros..nes");
+            _formMain.OpenRom(@"Assets\Super Mario Bros..nes");
         }
 
         #region Initialization Routines
@@ -198,13 +208,15 @@ namespace MyNes
                 timelineSaveThumbnail.Load(Path.Combine(ASSETS_PATH, timelineSave.ThumbnailFilename));
                 timelineSaveThumbnail.Tag = timelineSave.ID;
                 timelineSaveThumbnail.Click += new EventHandler(onTimelineSaveThumbnailClick);
-                saveStatesPanel.Controls.Add(timelineSaveThumbnail);
-                saveStatesPanel.Paint += onTimelinePanelPaint;
+
+                _formMain.timelinePanel.Controls.Add(timelineSaveThumbnail);
+                _formMain.timelinePanel.Paint += onTimelinePanelPaint;
 
                 timelineSaveTitle.Size = new Size(TITLE_WIDTH, TITLE_HEIGHT);
                 timelineSaveTitle.Text = timelineSave.Name;
                 timelineSaveTitle.Location = new Point((MARGIN + THUMBNAIL_WIDTH + MARGIN), (((MARGIN + THUMBNAIL_HEIGHT) * timelineSave.ID) + MARGIN + MARGIN));
-                saveStatesPanel.Controls.Add(timelineSaveTitle);
+
+                _formMain.timelinePanel.Controls.Add(timelineSaveTitle);
             }
         }
 
@@ -278,7 +290,7 @@ namespace MyNes
 
         #endregion
 
-        #region Core Control Routines
+        #region Core Control Routines and Handlers
 
         private void resetThenLoadTimelineSave(string timelineSaveFilename)
         {
@@ -287,11 +299,10 @@ namespace MyNes
             NesEmu.EMUHardReset();
         }
 
-        // ?????
-        private void NesEmu_EMUHardReseted(object sender, EventArgs e)
+        private void onCoreHardReseted(object sender, EventArgs e)
         {
-            if (InvokeRequired)
-                Invoke(new Action(() => NesEmu_EMUHardReseted(sender, e)));
+            if (_formMain.InvokeRequired)
+                _formMain.Invoke(new Action(() => onCoreHardReseted(sender, e)));
             else
             {
                 if (_wasResetForTimelineLoad)
@@ -330,18 +341,18 @@ namespace MyNes
             g.DrawLine(myPen, (temp.Location.X - 3), (temp.Location.Y + temp.Height + 3), (temp.Location.X + temp.Width + 3), (temp.Location.Y + temp.Height + 3));
         }
 
-        // ?????
         private void writeLogMessage(string message)
         {
-            if (InvokeRequired)
-                Invoke(new Action(() => writeLogMessage(message)));
+            if (_formMain.InvokeRequired)
+                _formMain.Invoke(new Action(() => writeLogMessage(message)));
             else
             {
-                logListBox.Items.Add(message);
-                logListBox.SelectedIndex = logListBox.Items.Count - 1;
-                logListBox.SelectedIndex = -1;
+                _formMain.logListBox.Items.Add(message);
+                _formMain.logListBox.SelectedIndex = _formMain.logListBox.Items.Count - 1;
+                _formMain.logListBox.SelectedIndex = -1;
             }
         }
+
         #endregion
     }
 }

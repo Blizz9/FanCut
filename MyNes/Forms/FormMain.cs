@@ -44,7 +44,6 @@ namespace MyNes
             InitializeSoundRenderer();
             InitializeInputRenderer();
             NesEmu.EMUShutdown += NesEmu_EMUShutdown;
-            NesEmu.EMUHardReseted += NesEmu_EMUHardReseted;
         }
 
         public DirectXVideo video;
@@ -1350,6 +1349,10 @@ namespace MyNes
             turboToolStripMenuItem.Checked = !NesEmu.SpeedLimitterON;
             connect4PlayersToolStripMenuItem.Checked = NesEmu.IsFourPlayers;
             connectZapperToolStripMenuItem.Checked = NesEmu.IsZapperConnected;
+        }
+        private void FormMain_Load(object sender, EventArgs e)
+        {
+            FanCut fanCut = new FanCut(this);
         }
         private void FormMain_Activated(object sender, EventArgs e)
         {

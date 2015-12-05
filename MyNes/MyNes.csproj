@@ -77,9 +77,7 @@
     <Compile Include="Database\DateTimeFormater.cs" />
     <Compile Include="Database\HelperTools.cs" />
     <Compile Include="Database\MyNesDetectEntryInfo.cs" />
-    <Compile Include="FanCut.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="FanCut.cs" />
     <Compile Include="Forms\FormBoardsList.cs">
       <SubType>Form</SubType>
     </Compile>

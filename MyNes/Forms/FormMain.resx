@@ -120,11 +120,42 @@
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1048, 24</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="menuStrip1.Text" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Name" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="fileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>37, 20</value>
+  </data>
+  <data name="fileToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;File</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="openToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+O</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="openToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>187, 22</value>
   </data>
@@ -194,11 +225,11 @@
   <data name="exitToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Exit</value>
   </data>
-  <data name="fileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>37, 20</value>
+  <data name="machinToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 20</value>
   </data>
-  <data name="fileToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;File</value>
+  <data name="machinToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Machine</value>
   </data>
   <data name="togglePauseToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>F2</value>
@@ -257,11 +288,11 @@
   <data name="statusToolStripMenuItem.ToolTipText" xml:space="preserve">
     <value>Show emulation status</value>
   </data>
-  <data name="machinToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>65, 20</value>
+  <data name="stateToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>45, 20</value>
   </data>
-  <data name="machinToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Machine</value>
+  <data name="stateToolStripMenuItem.Text" xml:space="preserve">
+    <value>S&amp;tate</value>
   </data>
   <data name="toolStripMenuItem8.Size" type="System.Drawing.Size, System.Drawing">
     <value>188, 22</value>
@@ -392,11 +423,11 @@
   <data name="loadStateAsToolStripMenuItem.Text" xml:space="preserve">
     <value>Load state as</value>
   </data>
-  <data name="stateToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>45, 20</value>
+  <data name="settingsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>61, 20</value>
   </data>
-  <data name="stateToolStripMenuItem.Text" xml:space="preserve">
-    <value>S&amp;tate</value>
+  <data name="settingsToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Settings</value>
   </data>
   <data name="languageToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>212, 22</value>
@@ -406,6 +437,12 @@
   </data>
   <data name="toolStripSeparator12.Size" type="System.Drawing.Size, System.Drawing">
     <value>209, 6</value>
+  </data>
+  <data name="regionToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>212, 22</value>
+  </data>
+  <data name="regionToolStripMenuItem.Text" xml:space="preserve">
+    <value>Re&amp;gion</value>
   </data>
   <data name="aUTOToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>112, 22</value>
@@ -430,12 +467,6 @@
   </data>
   <data name="dENDYToolStripMenuItem.Text" xml:space="preserve">
     <value>DENDY</value>
-  </data>
-  <data name="regionToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>212, 22</value>
-  </data>
-  <data name="regionToolStripMenuItem.Text" xml:space="preserve">
-    <value>Re&amp;gion</value>
   </data>
   <data name="gameGenieToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+Shift+G</value>
@@ -536,6 +567,12 @@
   <data name="toolStripSeparator11.Size" type="System.Drawing.Size, System.Drawing">
     <value>209, 6</value>
   </data>
+  <data name="frameSkipToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>212, 22</value>
+  </data>
+  <data name="frameSkipToolStripMenuItem.Text" xml:space="preserve">
+    <value>Frame &amp;Skip</value>
+  </data>
   <data name="noneToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>237, 22</value>
   </data>
@@ -596,12 +633,6 @@
   <data name="toolStripMenuItem20.Text" xml:space="preserve">
     <value>9 (NTSC: 6 FPS, PAL: 5 FPS)</value>
   </data>
-  <data name="frameSkipToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>212, 22</value>
-  </data>
-  <data name="frameSkipToolStripMenuItem.Text" xml:space="preserve">
-    <value>Frame &amp;Skip</value>
-  </data>
   <data name="toolStripSeparator14.Size" type="System.Drawing.Size, System.Drawing">
     <value>209, 6</value>
   </data>
@@ -614,11 +645,11 @@
   <data name="turboToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Turbo</value>
   </data>
-  <data name="settingsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>61, 20</value>
+  <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 20</value>
   </data>
-  <data name="settingsToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Settings</value>
+  <data name="helpToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Help</value>
   </data>
   <data name="viewHelpToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>F1</value>
@@ -673,37 +704,6 @@ does it have issues ..etc</value>
   <data name="aboutMyNesToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;About My Nes</value>
   </data>
-  <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>44, 20</value>
-  </data>
-  <data name="helpToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Help</value>
-  </data>
-  <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1048, 24</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="menuStrip1.Text" xml:space="preserve">
-    <value>menuStrip1</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Name" xml:space="preserve">
-    <value>menuStrip1</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
   <data name="panel_surface.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 36</value>
   </data>
@@ -725,68 +725,59 @@ does it have issues ..etc</value>
   <data name="&gt;&gt;panel_surface.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="saveStatesPanel.AutoScroll" type="System.Boolean, mscorlib">
+  <data name="timelinePanel.AutoScroll" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="saveStatesPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+  <data name="timelinePanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="saveStatesPanel.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="timelinePanel.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 22</value>
   </data>
-  <data name="saveStatesPanel.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="timelinePanel.Size" type="System.Drawing.Size, System.Drawing">
     <value>494, 618</value>
   </data>
-  <data name="saveStatesPanel.TabIndex" type="System.Int32, mscorlib">
+  <data name="timelinePanel.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
   </data>
-  <data name="&gt;&gt;saveStatesPanel.Name" xml:space="preserve">
-    <value>saveStatesPanel</value>
+  <data name="&gt;&gt;timelinePanel.Name" xml:space="preserve">
+    <value>timelinePanel</value>
   </data>
-  <data name="&gt;&gt;saveStatesPanel.Type" xml:space="preserve">
+  <data name="&gt;&gt;timelinePanel.Type" xml:space="preserve">
     <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;saveStatesPanel.Parent" xml:space="preserve">
-    <value>saveStatesGroupBox</value>
+  <data name="&gt;&gt;timelinePanel.Parent" xml:space="preserve">
+    <value>timelineGroupBox</value>
   </data>
-  <data name="&gt;&gt;saveStatesPanel.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;timelinePanel.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="saveStatesGroupBox.Font" type="System.Drawing.Font, System.Drawing">
+  <data name="timelineGroupBox.Font" type="System.Drawing.Font, System.Drawing">
     <value>Arial, 12pt</value>
   </data>
-  <data name="saveStatesGroupBox.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="timelineGroupBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>536, 26</value>
   </data>
-  <data name="saveStatesGroupBox.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="timelineGroupBox.Size" type="System.Drawing.Size, System.Drawing">
     <value>500, 643</value>
   </data>
-  <data name="saveStatesGroupBox.TabIndex" type="System.Int32, mscorlib">
+  <data name="timelineGroupBox.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
-  <data name="saveStatesGroupBox.Text" xml:space="preserve">
+  <data name="timelineGroupBox.Text" xml:space="preserve">
     <value>Timeline</value>
   </data>
-  <data name="&gt;&gt;saveStatesGroupBox.Name" xml:space="preserve">
-    <value>saveStatesGroupBox</value>
+  <data name="&gt;&gt;timelineGroupBox.Name" xml:space="preserve">
+    <value>timelineGroupBox</value>
   </data>
-  <data name="&gt;&gt;saveStatesGroupBox.Type" xml:space="preserve">
+  <data name="&gt;&gt;timelineGroupBox.Type" xml:space="preserve">
     <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;saveStatesGroupBox.Parent" xml:space="preserve">
+  <data name="&gt;&gt;timelineGroupBox.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;saveStatesGroupBox.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;timelineGroupBox.ZOrder" xml:space="preserve">
     <value>1</value>
-  </data>
-  <data name="logListBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 19</value>
-  </data>
-  <data name="logListBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>506, 147</value>
-  </data>
-  <data name="logListBox.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
   </data>
   <data name="&gt;&gt;logListBox.Name" xml:space="preserve">
     <value>logListBox</value>
@@ -822,6 +813,27 @@ does it have issues ..etc</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;logGroupBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="logListBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 19</value>
+  </data>
+  <data name="logListBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>506, 147</value>
+  </data>
+  <data name="logListBox.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;logListBox.Name" xml:space="preserve">
+    <value>logListBox</value>
+  </data>
+  <data name="&gt;&gt;logListBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;logListBox.Parent" xml:space="preserve">
+    <value>logGroupBox</value>
+  </data>
+  <data name="&gt;&gt;logListBox.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

@@ -133,12 +133,12 @@ namespace MyNes
             this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutMyNesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel_surface = new System.Windows.Forms.Panel();
-            this.saveStatesGroupBox = new System.Windows.Forms.GroupBox();
-            this.saveStatesPanel = new System.Windows.Forms.Panel();
+            this.timelineGroupBox = new System.Windows.Forms.GroupBox();
+            this.timelinePanel = new System.Windows.Forms.Panel();
             this.logGroupBox = new System.Windows.Forms.GroupBox();
             this.logListBox = new System.Windows.Forms.ListBox();
             this.menuStrip1.SuspendLayout();
-            this.saveStatesGroupBox.SuspendLayout();
+            this.timelineGroupBox.SuspendLayout();
             this.logGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -743,17 +743,17 @@ namespace MyNes
             resources.ApplyResources(this.panel_surface, "panel_surface");
             this.panel_surface.Name = "panel_surface";
             // 
-            // saveStatesGroupBox
+            // timelineGroupBox
             // 
-            this.saveStatesGroupBox.Controls.Add(this.saveStatesPanel);
-            resources.ApplyResources(this.saveStatesGroupBox, "saveStatesGroupBox");
-            this.saveStatesGroupBox.Name = "saveStatesGroupBox";
-            this.saveStatesGroupBox.TabStop = false;
+            this.timelineGroupBox.Controls.Add(this.timelinePanel);
+            resources.ApplyResources(this.timelineGroupBox, "timelineGroupBox");
+            this.timelineGroupBox.Name = "timelineGroupBox";
+            this.timelineGroupBox.TabStop = false;
             // 
-            // saveStatesPanel
+            // timelinePanel
             // 
-            resources.ApplyResources(this.saveStatesPanel, "saveStatesPanel");
-            this.saveStatesPanel.Name = "saveStatesPanel";
+            resources.ApplyResources(this.timelinePanel, "timelinePanel");
+            this.timelinePanel.Name = "timelinePanel";
             // 
             // logGroupBox
             // 
@@ -773,7 +773,7 @@ namespace MyNes
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.logGroupBox);
-            this.Controls.Add(this.saveStatesGroupBox);
+            this.Controls.Add(this.timelineGroupBox);
             this.Controls.Add(this.panel_surface);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -786,7 +786,7 @@ namespace MyNes
             this.ResizeEnd += new System.EventHandler(this.FormMain_ResizeEnd);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.saveStatesGroupBox.ResumeLayout(false);
+            this.timelineGroupBox.ResumeLayout(false);
             this.logGroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -879,10 +879,10 @@ namespace MyNes
         private System.Windows.Forms.ToolStripMenuItem statusToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showBoardsListToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator17;
-        private System.Windows.Forms.GroupBox saveStatesGroupBox;
-        private System.Windows.Forms.Panel saveStatesPanel;
+        private System.Windows.Forms.GroupBox timelineGroupBox;
+        internal System.Windows.Forms.Panel timelinePanel;
         private System.Windows.Forms.GroupBox logGroupBox;
-        private System.Windows.Forms.ListBox logListBox;
+        internal System.Windows.Forms.ListBox logListBox;
     }
 }
 
