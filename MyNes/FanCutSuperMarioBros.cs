@@ -8,11 +8,8 @@ namespace MyNes
     internal class FanCutSuperMarioBros
     {
         // TODO: Add pictures for save states that don't have them
-        // TODO: Do some with New Game+?
-        // TODO: Implement save state injection here first? Not really required.
         // TODO: Add timeline highlights
         // TODO: Add SHA-1 check on the ROM
-        // TODO: Tell the user 2 players isnt supported
         // TODO: Do a new checkout and do a final compare with the virgin mynes code
 
         // Things I Changed in virgin MyNES:
@@ -42,6 +39,8 @@ namespace MyNes
 
         private const ushort PLAYER_POWERUP_STATE_ADDRESS = 0x0756;
         private const byte PLAYER_POWERUP_STATE_FIERY = 0x02;
+
+        private const ushort NUMBER_OF_PLAYERS_ADDRESS = 0x077A;
 
         private const ushort PLAYER_LIVES_ADDRESS = 0x075A;
         private const ushort PLAYER_COINS_ADDRESS = 0x075E;
@@ -180,6 +179,10 @@ namespace MyNes
             if ((previousValue == PLAYER_STATE_NORMAL) && (newValue == PLAYER_STATE_LEFTMOST_OF_SCREEN) && (playerLives == 2))
             {
                 _fanCutCommon.WriteLogMessage("Detected player start, loading first timeline save.");
+
+                if (NesEmu.WRAM[NUMBER_OF_PLAYERS_ADDRESS & 0x7FF] == 0x01)
+                    _fanCutCommon.WriteLogMessage("This FanCut only supports single player.");
+
                 _fanCutCommon.ResetThenLoadTimelineSave(_timelineSaves.First().Filename);
             }
 

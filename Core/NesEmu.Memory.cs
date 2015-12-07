@@ -152,8 +152,6 @@ namespace MyNes.Core
 
             if (address < 0x2000)// Internal 2K Work RAM (mirrored to 800h-1FFFh)
             {
-                //if (address == 0x009A) return (0xFB);
-
                 if (ReadTriggers != null)
                     if (ReadTriggers.Contains((ushort)address))
                     {
