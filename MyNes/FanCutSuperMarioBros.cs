@@ -15,7 +15,6 @@ namespace MyNes
         // TODO: Move all save states to .ss, since they are really no longer mynes saves
         // TODO: Tell the user 2 players isnt supported
         // TODO: Do a new checkout and do a final compare with the virgin mynes code
-        // TODO: copy blit_buf.dll on build
 
         // Things I Changed in virgin MyNES:
         // commented out some unused code that was causing compiler warnings
