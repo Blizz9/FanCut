@@ -2,10 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace MyNes
 {
@@ -21,6 +19,7 @@ namespace MyNes
         #endregion
 
         private const string ASSETS_PATH = @"Assets\Mega Man 2";
+        private const string SHA1_HASH = "6B5B9235C3F630486ED8F07A133B044EAA2E22B2";
         private const string TIMELINE_SAVE_FILE_EXTENSION = ".tls";
         private const string TIMELINE_SAVE_THUMBNAIL_FILE_EXTENSION = ".png";
         private const string CHECKPOINT_FILENAME_SUFFIX = " (checkpoint)";
@@ -48,12 +47,10 @@ namespace MyNes
         {
             parseMemoryTriggers();
 
-            _fanCutCommon = new FanCutCommon(formMain, ASSETS_PATH, _timelineSaves);
-
             // this will override all the current saves, only do this when regenerating saves
             //upateTimelineSaves();
 
-            formMain.OpenRom(Path.Combine(ASSETS_PATH, "Mega Man 2.nes"));
+            _fanCutCommon = new FanCutCommon(formMain, ASSETS_PATH, _timelineSaves, SHA1_HASH);
             _fanCutCommon.ResetThenLoadTimelineSave("levelSelect.tls");
         }
 

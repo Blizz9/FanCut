@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Windows.Forms;
 
 namespace MyNes
@@ -20,7 +22,7 @@ namespace MyNes
         private bool _wasResetForTimelineLoad = false;
         private string _timelineSaveToLoad;
 
-        internal FanCutCommon(FormMain formMain, string assetsPath, List<TimelineSave> timelineSaves)
+        internal FanCutCommon(FormMain formMain, string assetsPath, List<TimelineSave> timelineSaves, string sha1Hash)
         {
             _formMain = formMain;
             _assetsPath = assetsPath;
@@ -29,6 +31,46 @@ namespace MyNes
             NesEmu.EMUHardReseted += onCoreHardReseted;
 
             layoutFormMain();
+
+            OpenFileDialog romOpenFileDialog = new OpenFileDialog();
+            romOpenFileDialog.Title = Program.ResourceManager.GetString("Title_OpenRom");
+            romOpenFileDialog.Filter = "NES ROM (*.nes) | *.nes";
+
+            bool isROMSelected = false;
+
+            while (!isROMSelected)
+            {
+                if (romOpenFileDialog.ShowDialog(formMain) == DialogResult.OK)
+                {
+                    StringBuilder romHashString;
+                    using (FileStream romFileStream = new FileStream(romOpenFileDialog.FileName, FileMode.Open))
+                    {
+                        using (BufferedStream romBufferedStream = new BufferedStream(romFileStream))
+                        {
+                            using (SHA1Managed romSHA1 = new SHA1Managed())
+                            {
+                                byte[] romHash = romSHA1.ComputeHash(romBufferedStream);
+                                romHashString = new StringBuilder(romHash.Length * 2);
+                                foreach (byte b in romHash)
+                                    romHashString.AppendFormat("{0:X2}", b);
+                            }
+                        }
+                    }
+
+                    if (romHashString.ToString() == sha1Hash)
+                    {
+                        isROMSelected = true;
+                        formMain.OpenRom(romOpenFileDialog.FileName);
+                    }
+                    else
+                        MessageBox.Show("You must load the proper ROM for this FanCut.", "ROM Mismatch");
+                }
+                else
+                {
+                    isROMSelected = true;
+                    Application.Exit();
+                }
+            }
         }
 
         #region Initialization Routines

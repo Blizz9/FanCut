@@ -9,8 +9,10 @@ namespace MyNes
     {
         // TODO: Add pictures for save states that don't have them
         // TODO: Add timeline highlights
-        // TODO: Add SHA-1 check on the ROM
         // TODO: Do a new checkout and do a final compare with the virgin mynes code
+        // TODO: Change window title
+        // TODO: Add better description to open rom window
+        // TODO: Change EXE build name
 
         // Things I Changed in virgin MyNES:
         // commented out some unused code that was causing compiler warnings
@@ -55,6 +57,7 @@ namespace MyNes
         #endregion
 
         private const string ASSETS_PATH = @"Assets\Super Mario Bros";
+        private const string SHA1_HASH = "EA343F4E445A9050D4B4FBAC2C77D0693B1D0922";
         private const string TIMELINE_SAVE_FILE_EXTENSION = ".tls";
         private const string TIMELINE_SAVE_THUMBNAIL_FILE_EXTENSION = ".png";
         private const string CHECKPOINT_FILENAME_SUFFIX = " (checkpoint)";
@@ -141,15 +144,13 @@ namespace MyNes
                 }
             }
 
-            _fanCutCommon = new FanCutCommon(formMain, ASSETS_PATH, _timelineSaves);
-
             NesEmu.ChangeTriggers = new List<ushort>();
             NesEmu.ChangeTriggers.Add(PLAYER_STATE_ADDRESS);
             NesEmu.ChangeTriggers.Add(WORLD_NUMBER_ADDRESS);
             NesEmu.ChangeTriggers.Add(LEVEL_NUMBER_ADDRESS);
             NesEmu.ChangeTriggerHandler = onMemoryChanging;
 
-            formMain.OpenRom(@"Assets\Super Mario Bros\Super Mario Bros..nes");
+            _fanCutCommon = new FanCutCommon(formMain, ASSETS_PATH, _timelineSaves, SHA1_HASH);
         }
 
         #region Memory Trigger Handlers
