@@ -1,10 +1,7 @@
 ﻿using MyNes.Core;
-using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace MyNes
 {
@@ -17,11 +14,8 @@ namespace MyNes
         // TODO: Add SHA-1 check on the ROM
         // TODO: Move all save states to .ss, since they are really no longer mynes saves
         // TODO: Tell the user 2 players isnt supported
-        // TODO: FanCut? - rename the containing folder based on this decision
         // TODO: Do a new checkout and do a final compare with the virgin mynes code
         // TODO: copy blit_buf.dll on build
-        // TODO: move shared fancut logic to central area
-        // TODO: move assets to super mario bros dir
 
         // Things I Changed in virgin MyNES:
         // commented out some unused code that was causing compiler warnings
@@ -63,26 +57,18 @@ namespace MyNes
 
         #endregion
 
-        private const string ASSETS_PATH = "Assets";
+        private const string ASSETS_PATH = @"Assets\Super Mario Bros";
         private const string TIMELINE_SAVE_FILE_EXTENSION = ".mns";
         private const string TIMELINE_SAVE_THUMBNAIL_FILE_EXTENSION = ".png";
         private const string CHECKPOINT_FILENAME_SUFFIX = " (checkpoint)";
 
-        private FormMain _formMain;
-        private ListBox _logListBox;
+        private FanCutCommon _fanCutCommon;
 
         private List<SuperMarioBrosLevel> _levels;
         private List<TimelineSave> _timelineSaves;
 
-        private bool _wasResetForTimelineLoad = false;
-        private string _timelineSaveToLoad;
-
         internal FanCutSuperMarioBros(FormMain formMain)
         {
-            _formMain = formMain;
-
-            NesEmu.EMUHardReseted += onCoreHardReseted;
-
             _levels = new List<SuperMarioBrosLevel>();
 
             _levels.Add(new SuperMarioBrosLevel() { Name = "World 1-1", WorldNumber = 0, LevelDisplayNumber = 0, LevelNumber = 0, AreaLoadedValue = 0x25, CheckpointScreenNumber = 5 });
@@ -126,7 +112,7 @@ namespace MyNes
             _levels.Add(new SuperMarioBrosLevel() { Name = "World 8-4", WorldNumber = 7, LevelDisplayNumber = 3, LevelNumber = 3, AreaLoadedValue = 0x65, CheckpointScreenNumber = 0 });
             
             // this will override all the current saves, only do this when regenerating saves
-            //createTimelineSaves();
+            //upateTimelineSaves();
 
             _timelineSaves = new List<TimelineSave>();
             int index = 0;
@@ -158,7 +144,7 @@ namespace MyNes
                 }
             }
 
-            layoutFormMain();
+            _fanCutCommon = new FanCutCommon(formMain, ASSETS_PATH, _timelineSaves);
 
             NesEmu.ChangeTriggers = new List<ushort>();
             NesEmu.ChangeTriggers.Add(PLAYER_STATE_ADDRESS);
@@ -166,12 +152,98 @@ namespace MyNes
             NesEmu.ChangeTriggers.Add(LEVEL_NUMBER_ADDRESS);
             NesEmu.ChangeTriggerHandler = onMemoryChanging;
 
-            _formMain.OpenRom(@"Assets\Super Mario Bros..nes");
+            formMain.OpenRom(@"Assets\Super Mario Bros\Super Mario Bros..nes");
         }
 
-        #region Initialization Routines
+        #region Memory Trigger Handlers
 
-        private void createTimelineSaves()
+        private void onMemoryChanging(ushort address, byte previousValue, byte newValue)
+        {
+            switch (address)
+            {
+                case PLAYER_STATE_ADDRESS:
+                    onPlayerStateChanging(previousValue, newValue);
+                    break;
+
+                case WORLD_NUMBER_ADDRESS:
+                    onWorldNumberChanging(previousValue, newValue);
+                    break;
+
+                case LEVEL_NUMBER_ADDRESS:
+                    onLevelNumberChanging(previousValue, newValue);
+                    break;
+            }
+        }
+
+        private void onPlayerStateChanging(byte previousValue, byte newValue)
+        {
+            byte playerLives = NesEmu.WRAM[PLAYER_LIVES_ADDRESS & 0x7FF];
+
+            if ((previousValue == PLAYER_STATE_NORMAL) && (newValue == PLAYER_STATE_LEFTMOST_OF_SCREEN) && (playerLives == 2))
+            {
+                _fanCutCommon.WriteLogMessage("Detected player start, loading first timeline save.");
+                _fanCutCommon.ResetThenLoadTimelineSave(_timelineSaves.First().Filename);
+            }
+
+            if ((previousValue == PLAYER_STATE_DIED) && (newValue == PLAYER_STATE_LEFTMOST_OF_SCREEN))
+            {
+                byte worldNumber = NesEmu.WRAM[WORLD_NUMBER_ADDRESS & 0x7FF];
+                byte levelNumber = NesEmu.WRAM[LEVEL_NUMBER_ADDRESS & 0x7FF];
+                byte levelScreenNumber = NesEmu.WRAM[LEVEL_SCREEN_ADDRESS & 0x7FF];
+
+                SuperMarioBrosLevel currentLevel = (from l in _levels where (l.WorldNumber == worldNumber) && (l.LevelNumber == levelNumber) select l).FirstOrDefault();
+                if (currentLevel != null)
+                {
+                    bool isPastCheckpoint = (currentLevel.CheckpointScreenNumber != 0) && (levelScreenNumber >= currentLevel.CheckpointScreenNumber);
+
+                    string timelineSaveName = currentLevel.Name + (isPastCheckpoint ? CHECKPOINT_FILENAME_SUFFIX : string.Empty);
+                    string timelineSaveFilename = (from ts in _timelineSaves where ts.Name == timelineSaveName select ts.Filename).FirstOrDefault();
+
+                    if (!string.IsNullOrWhiteSpace(timelineSaveFilename))
+                    {
+                        _fanCutCommon.WriteLogMessage(string.Format("Detected player death on {0}{1}.", currentLevel.Name, (isPastCheckpoint ? " (past checkpoint)" : string.Empty)));
+                        _fanCutCommon.ResetThenLoadTimelineSave(timelineSaveFilename);
+                    }
+                }
+            }
+        }
+
+        private void onWorldNumberChanging(byte previousValue, byte newValue)
+        {
+            byte worldNumber = newValue;
+            byte levelNumber = NesEmu.WRAM[LEVEL_NUMBER_ADDRESS & 0x7FF];
+            loadTimelineSaveOnLevelCompletion(worldNumber, levelNumber);
+        }
+
+        private void onLevelNumberChanging(byte previousValue, byte newValue)
+        {
+            if (previousValue < newValue)
+            {
+                byte worldNumber = NesEmu.WRAM[WORLD_NUMBER_ADDRESS & 0x7FF];
+                byte levelNumber = newValue;
+                loadTimelineSaveOnLevelCompletion(worldNumber, levelNumber);
+            }
+        }
+
+        private void loadTimelineSaveOnLevelCompletion(byte worldNumber, byte levelNumber)
+        {
+            SuperMarioBrosLevel currentLevel = (from l in _levels where (l.WorldNumber == worldNumber) && (l.LevelNumber == levelNumber) select l).FirstOrDefault();
+            if (currentLevel != null)
+                if (_levels.IndexOf(currentLevel) != 0)
+                {
+                    SuperMarioBrosLevel previousLevel = _levels[_levels.IndexOf(currentLevel) - 1];
+
+                    _fanCutCommon.WriteLogMessage(string.Format("Detected completion of {0}", previousLevel.Name));
+
+                    _fanCutCommon.ResetThenLoadTimelineSave((from ts in _timelineSaves where ts.Name == currentLevel.Name select ts.Filename).First());
+                }
+        }
+
+        #endregion
+
+        #region Miscellaneous Routines
+
+        private void upateTimelineSaves()
         {
             foreach (SuperMarioBrosLevel level in _levels)
             {
@@ -207,219 +279,6 @@ namespace MyNes
                     saveStateStream.Write(saveState, 0, saveState.Length);
                     saveStateStream.Close();
                 }
-            }
-        }
-
-        private void layoutFormMain()
-        {
-            const int MARGIN = 10;
-            const int THUMBNAIL_WIDTH = 256;
-            const int THUMBNAIL_HEIGHT = 224;
-
-            _formMain.Size = new Size(1048, 682);
-            _formMain.FormBorderStyle = FormBorderStyle.FixedSingle;
-            _formMain.MaximizeBox = false;
-
-            _formMain.panel_surface.Dock = DockStyle.None;
-            _formMain.panel_surface.Location = new Point(12, 36);
-            _formMain.panel_surface.Size = new Size(512, 448);
-
-            GroupBox timelineGroupBox = new GroupBox();
-            timelineGroupBox.Location = new Point(536, 26);
-            timelineGroupBox.Size = new Size(486, 608);
-            timelineGroupBox.Font = new Font("Arial", 12);
-            timelineGroupBox.Text = "Timeline";
-            _formMain.Controls.Add(timelineGroupBox);
-
-            Panel timelinePanel = new Panel();
-            timelinePanel.Location = new Point(3, 22);
-            timelinePanel.Size = new Size(494, 618);
-            timelinePanel.Dock = DockStyle.Fill;
-            timelinePanel.AutoScroll = true;
-            timelinePanel.Paint += onTimelinePanelPaint;
-            timelineGroupBox.Controls.Add(timelinePanel);
-
-            GroupBox logGroupBox = new GroupBox();
-            logGroupBox.Location = new Point(12, 490);
-            logGroupBox.Size = new Size(513, 144);
-            logGroupBox.Font = new Font("Arial", 12);
-            logGroupBox.Text = "Log";
-            _formMain.Controls.Add(logGroupBox);
-
-            _logListBox = new ListBox();
-            _logListBox.Location = new Point(6, 23);
-            _logListBox.Size = new Size(501, 125);
-            logGroupBox.Controls.Add(_logListBox);
-
-            foreach (TimelineSave timelineSave in _timelineSaves)
-            {
-                PictureBox timelineSaveThumbnail = new PictureBox();
-                Label timelineSaveTitle = new Label();
-
-                timelineSaveThumbnail.Size = new Size(THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT);
-                timelineSaveThumbnail.Location = new Point(MARGIN, (((MARGIN + THUMBNAIL_HEIGHT) * timelineSave.ID) + MARGIN));
-                timelineSaveThumbnail.Load(Path.Combine(ASSETS_PATH, timelineSave.ThumbnailFilename));
-                timelineSaveThumbnail.Tag = timelineSave.ID;
-                timelineSaveThumbnail.Click += new EventHandler(onTimelineSaveThumbnailClick);
-
-                timelinePanel.Controls.Add(timelineSaveThumbnail);
-
-                timelineSaveTitle.Size = new Size(100, 36);
-                timelineSaveTitle.Text = timelineSave.Name;
-                timelineSaveTitle.Location = new Point((MARGIN + THUMBNAIL_WIDTH + MARGIN), (((MARGIN + THUMBNAIL_HEIGHT) * timelineSave.ID) + MARGIN + MARGIN));
-
-                timelinePanel.Controls.Add(timelineSaveTitle);
-            }
-        }
-
-        #endregion
-
-        #region Change Trigger Handlers
-
-        private void onMemoryChanging(ushort address, byte previousValue, byte newValue)
-        {
-            switch (address)
-            {
-                case PLAYER_STATE_ADDRESS:
-                    onPlayerStateChanging(previousValue, newValue);
-                    break;
-
-                case WORLD_NUMBER_ADDRESS:
-                    onWorldNumberChanging(previousValue, newValue);
-                    break;
-
-                case LEVEL_NUMBER_ADDRESS:
-                    onLevelNumberChanging(previousValue, newValue);
-                    break;
-            }
-        }
-
-        private void onPlayerStateChanging(byte previousValue, byte newValue)
-        {
-            byte playerLives = NesEmu.WRAM[PLAYER_LIVES_ADDRESS & 0x7FF];
-
-            if ((previousValue == PLAYER_STATE_NORMAL) && (newValue == PLAYER_STATE_LEFTMOST_OF_SCREEN) && (playerLives == 2))
-            {
-                writeLogMessage("Detected player start, loading first timeline save.");
-                resetThenLoadTimelineSave(_timelineSaves.First().Filename);
-            }
-
-            if ((previousValue == PLAYER_STATE_DIED) && (newValue == PLAYER_STATE_LEFTMOST_OF_SCREEN))
-            {
-                byte worldNumber = NesEmu.WRAM[WORLD_NUMBER_ADDRESS & 0x7FF];
-                byte levelNumber = NesEmu.WRAM[LEVEL_NUMBER_ADDRESS & 0x7FF];
-                byte levelScreenNumber = NesEmu.WRAM[LEVEL_SCREEN_ADDRESS & 0x7FF];
-
-                SuperMarioBrosLevel currentLevel = (from l in _levels where (l.WorldNumber == worldNumber) && (l.LevelNumber == levelNumber) select l).FirstOrDefault();
-                if (currentLevel != null)
-                {
-                    bool isPastCheckpoint = (currentLevel.CheckpointScreenNumber != 0) && (levelScreenNumber >= currentLevel.CheckpointScreenNumber);
-
-                    string timelineSaveName = currentLevel.Name + (isPastCheckpoint ? CHECKPOINT_FILENAME_SUFFIX : string.Empty);
-                    string timelineSaveFilename = (from ts in _timelineSaves where ts.Name == timelineSaveName select ts.Filename).FirstOrDefault();
-
-                    if (!string.IsNullOrWhiteSpace(timelineSaveFilename))
-                    {
-                        writeLogMessage(string.Format("Detected player death on {0}{1}.", currentLevel.Name, (isPastCheckpoint ? " (past checkpoint)" : string.Empty)));
-                        resetThenLoadTimelineSave(timelineSaveFilename);
-                    }
-                }
-            }
-        }
-
-        private void onWorldNumberChanging(byte previousValue, byte newValue)
-        {
-            byte worldNumber = newValue;
-            byte levelNumber = NesEmu.WRAM[LEVEL_NUMBER_ADDRESS & 0x7FF];
-            loadTimelineSaveOnLevelCompletion(worldNumber, levelNumber);
-        }
-
-        private void onLevelNumberChanging(byte previousValue, byte newValue)
-        {
-            if (previousValue < newValue)
-            {
-                byte worldNumber = NesEmu.WRAM[WORLD_NUMBER_ADDRESS & 0x7FF];
-                byte levelNumber = newValue;
-                loadTimelineSaveOnLevelCompletion(worldNumber, levelNumber);
-            }
-        }
-
-        private void loadTimelineSaveOnLevelCompletion(byte worldNumber, byte levelNumber)
-        {
-            SuperMarioBrosLevel currentLevel = (from l in _levels where (l.WorldNumber == worldNumber) && (l.LevelNumber == levelNumber) select l).FirstOrDefault();
-            if (currentLevel != null)
-                if (_levels.IndexOf(currentLevel) != 0)
-                {
-                    SuperMarioBrosLevel previousLevel = _levels[_levels.IndexOf(currentLevel) - 1];
-
-                    writeLogMessage(string.Format("Detected completion of {0}", previousLevel.Name));
-
-                    resetThenLoadTimelineSave((from ts in _timelineSaves where ts.Name == currentLevel.Name select ts.Filename).First());
-                }
-        }
-
-        #endregion
-
-        #region Core Control Routines and Handlers
-
-        private void resetThenLoadTimelineSave(string timelineSaveFilename)
-        {
-            _timelineSaveToLoad = Path.Combine(ASSETS_PATH, timelineSaveFilename);
-            _wasResetForTimelineLoad = true;
-            NesEmu.EMUHardReset();
-        }
-
-        private void onCoreHardReseted(object sender, EventArgs e)
-        {
-            if (_formMain.InvokeRequired)
-                _formMain.Invoke(new Action(() => onCoreHardReseted(sender, e)));
-            else
-            {
-                if (_wasResetForTimelineLoad)
-                {
-                    _wasResetForTimelineLoad = false;
-                    NesEmu.LoadStateAs(_timelineSaveToLoad);
-                    writeLogMessage(string.Format("Loaded timeline save: {0}", Path.GetFileNameWithoutExtension(_timelineSaveToLoad)));
-                }
-            }
-        }
-
-        #endregion
-
-        #region UI Routines and Handlers
-
-        private void onTimelineSaveThumbnailClick(object sender, EventArgs e)
-        {
-            TimelineSave timelineSave = (from ts in _timelineSaves where ts.ID == (int)((Control)sender).Tag select ts).FirstOrDefault();
-
-            if (timelineSave != null)
-                resetThenLoadTimelineSave(timelineSave.Filename);
-        }
-
-        private void onTimelinePanelPaint(object sender, PaintEventArgs e)
-        {
-            Graphics g = e.Graphics;
-
-            Control temp = ((Control)sender).Controls[0];
-
-            Pen myPen = new Pen(Color.Red);
-            myPen.Width = 3;
-
-            g.DrawLine(myPen, (temp.Location.X - 3), (temp.Location.Y - 3), (temp.Location.X + temp.Width + 3), (temp.Location.Y - 3));
-            g.DrawLine(myPen, (temp.Location.X - 3), (temp.Location.Y - 3), (temp.Location.X - 3), (temp.Location.Y + temp.Height + 3));
-            g.DrawLine(myPen, (temp.Location.X + temp.Width + 3), (temp.Location.Y - 3), (temp.Location.X + temp.Width + 3), (temp.Location.Y + temp.Height + 3));
-            g.DrawLine(myPen, (temp.Location.X - 3), (temp.Location.Y + temp.Height + 3), (temp.Location.X + temp.Width + 3), (temp.Location.Y + temp.Height + 3));
-        }
-
-        private void writeLogMessage(string message)
-        {
-            if (_formMain.InvokeRequired)
-                _formMain.Invoke(new Action(() => writeLogMessage(message)));
-            else
-            {
-                _logListBox.Items.Add(message);
-                _logListBox.SelectedIndex = _logListBox.Items.Count - 1;
-                _logListBox.SelectedIndex = -1;
             }
         }
 

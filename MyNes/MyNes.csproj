@@ -79,6 +79,7 @@
     <Compile Include="Database\MyNesDetectEntryInfo.cs" />
     <Compile Include="FanCutMegaMan2.cs" />
     <Compile Include="FanCutSuperMarioBros.cs" />
+    <Compile Include="FanCutCommon.cs" />
     <Compile Include="Forms\FormBoardsList.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -1,6 +1,7 @@
 ﻿using MyNes.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -24,97 +25,135 @@ namespace MyNes
         private const string TIMELINE_SAVE_THUMBNAIL_FILE_EXTENSION = ".png";
         private const string CHECKPOINT_FILENAME_SUFFIX = " (checkpoint)";
 
-        private FormMain _formMain;
-        private ListBox _logListBox;
+        private FanCutCommon _fanCutCommon;
 
         private List<TimelineSave> _timelineSaves;
 
-        private Dictionary<ushort, string> _changeTriggerAddresses;
-        private Dictionary<ushort, string> _readTriggerAddresses;
+        private Dictionary<ushort, string> _changeTriggers;
+        private Dictionary<ushort, string> _readTriggers;
 
-        private bool _wasResetForTimelineLoad = false;
-        private string _timelineSaveToLoad;
+        private List<string> _changeTriggerStrings = new List<string>()
+        {
+            "0028, 0029, 002A",
+            "002B-00DF",
+            PLAYER_HIT_POINTS.ToString("X4") + "(Player Hit Points)"
+        };
+
+        private List<string> _changeTriggerExclusionStrings = new List<string>()
+        {
+            "0029, 002B, 002D, 002E, 002F, 0032, 0033, 003A, 0043, 0044, 0047, 004A, 0068, 0069",
+        };
 
         internal FanCutMegaMan2(FormMain formMain)
         {
-            _formMain = formMain;
+            parseMemoryTriggers();
 
-            NesEmu.EMUHardReseted += onCoreHardReseted;
+            _fanCutCommon = new FanCutCommon(formMain, ASSETS_PATH, _timelineSaves);
 
-            layoutFormMain();
+            // this will override all the current saves, only do this when regenerating saves
+            //upateTimelineSaves();
 
-            _changeTriggerAddresses = new Dictionary<ushort, string>();
-            _changeTriggerAddresses.Add(PLAYER_HIT_POINTS, "Player Hit Points");
-            _changeTriggerAddresses.Add(0x0440, string.Empty);
-            //_changeTriggerAddresses.Add(0x0460, string.Empty);
-
-            _readTriggerAddresses = new Dictionary<ushort, string>();
-            //_readTriggerAddresses.Add(0x0440, string.Empty);
-
-            NesEmu.ChangeTriggers = new List<ushort>();
-            NesEmu.ChangeTriggerHandler = onMemoryChanging;
-            foreach (ushort changeTriggerAddress in _changeTriggerAddresses.Keys)
-                NesEmu.ChangeTriggers.Add(changeTriggerAddress);
-
-            NesEmu.ReadTriggers = new List<ushort>();
-            NesEmu.ReadTriggerHandler = onMemoryRead;
-            foreach (ushort readTriggerAddress in _readTriggerAddresses.Keys)
-                NesEmu.ReadTriggers.Add(readTriggerAddress);
-
-            _formMain.OpenRom(Path.Combine(ASSETS_PATH, "Mega Man 2.nes"));
-            resetThenLoadTimelineSave("levelSelect.mns");
+            formMain.OpenRom(Path.Combine(ASSETS_PATH, "Mega Man 2.nes"));
+            _fanCutCommon.ResetThenLoadTimelineSave("levelSelect.mns");
         }
 
         #region Initialization Routines
 
-        private void layoutFormMain()
+        private void parseMemoryTriggers()
         {
-            _formMain.Size = new Size(1048, 682);
-            _formMain.FormBorderStyle = FormBorderStyle.FixedSingle;
-            _formMain.MaximizeBox = false;
+            _changeTriggers = new Dictionary<ushort, string>();
 
-            _formMain.panel_surface.Dock = DockStyle.None;
-            _formMain.panel_surface.Location = new Point(12, 36);
-            _formMain.panel_surface.Size = new Size(512, 448);
+            foreach (string changeTriggerString in _changeTriggerStrings)
+            {
+                List<string> separatedChangeTriggerStrings = changeTriggerString.Split(',').ToList();
 
-            GroupBox timelineGroupBox = new GroupBox();
-            timelineGroupBox.Location = new Point(536, 26);
-            timelineGroupBox.Size = new Size(486, 608);
-            timelineGroupBox.Font = new Font("Arial", 12);
-            timelineGroupBox.Text = "Timeline";
-            _formMain.Controls.Add(timelineGroupBox);
+                foreach (string separatedChangeTriggerString in separatedChangeTriggerStrings)
+                {
+                    string workingChangeTriggerString = separatedChangeTriggerString.Trim(' ');
 
-            Panel timelinePanel = new Panel();
-            timelinePanel.Location = new Point(3, 22);
-            timelinePanel.Size = new Size(494, 618);
-            timelinePanel.Dock = DockStyle.Fill;
-            timelinePanel.AutoScroll = true;
-            timelinePanel.Paint += onTimelinePanelPaint;
-            timelineGroupBox.Controls.Add(timelinePanel);
+                    if (workingChangeTriggerString.Contains('-'))
+                    {
+                        string[] changeTriggerRangeParts = workingChangeTriggerString.Split('-');
+                        ushort changeTriggerRangeMin = Convert.ToUInt16(changeTriggerRangeParts[0], 16);
+                        ushort changeTriggerRangeMax = Convert.ToUInt16(changeTriggerRangeParts[1], 16);
 
-            GroupBox logGroupBox = new GroupBox();
-            logGroupBox.Location = new Point(12, 490);
-            logGroupBox.Size = new Size(513, 144);
-            logGroupBox.Font = new Font("Arial", 12);
-            logGroupBox.Text = "Log";
-            _formMain.Controls.Add(logGroupBox);
+                        for (ushort changeTriggerAddress = changeTriggerRangeMin; changeTriggerAddress <= changeTriggerRangeMax; changeTriggerAddress++)
+                            if (!_changeTriggers.ContainsKey(changeTriggerAddress))
+                                _changeTriggers.Add(changeTriggerAddress, string.Empty);
+                    }
+                    else if (workingChangeTriggerString.Contains('('))
+                    {
+                        string[] annotatedChangeTriggerStringParts = workingChangeTriggerString.Split('(');
+                        ushort changeTriggerAddress = Convert.ToUInt16(annotatedChangeTriggerStringParts[0], 16);
+                        string changeTriggerDescription = annotatedChangeTriggerStringParts[1].TrimEnd(')');
 
-            _logListBox = new ListBox();
-            _logListBox.Location = new Point(6, 23);
-            _logListBox.Size = new Size(501, 125);
-            logGroupBox.Controls.Add(_logListBox);
+                        if (_changeTriggers.ContainsKey(changeTriggerAddress))
+                            _changeTriggers[changeTriggerAddress] = changeTriggerDescription;
+                        else
+                            _changeTriggers.Add(changeTriggerAddress, changeTriggerDescription);
+                    }
+                    else
+                    {
+                        ushort changeTriggerAddress = Convert.ToUInt16(workingChangeTriggerString, 16);
+
+                        if (!_changeTriggers.ContainsKey(changeTriggerAddress))
+                            _changeTriggers.Add(changeTriggerAddress, string.Empty);
+                    }
+                }
+            }
+
+            foreach (string changeTriggerExclusionString in _changeTriggerExclusionStrings)
+            {
+                List<string> separatedChangeTriggerStrings = changeTriggerExclusionString.Split(',').ToList();
+
+                foreach (string separatedChangeTriggerString in separatedChangeTriggerStrings)
+                {
+                    string workingChangeTriggerString = separatedChangeTriggerString.Trim(' ');
+
+                    if (workingChangeTriggerString.Contains('-'))
+                    {
+                        string[] changeTriggerRangeParts = workingChangeTriggerString.Split('-');
+                        ushort changeTriggerRangeMin = Convert.ToUInt16(changeTriggerRangeParts[0], 16);
+                        ushort changeTriggerRangeMax = Convert.ToUInt16(changeTriggerRangeParts[1], 16);
+
+                        for (ushort changeTriggerAddress = changeTriggerRangeMin; changeTriggerAddress <= changeTriggerRangeMax; changeTriggerAddress++)
+                            if (_changeTriggers.ContainsKey(changeTriggerAddress))
+                                _changeTriggers.Remove(changeTriggerAddress);
+                    }
+                    else
+                    {
+                        ushort changeTriggerAddress = Convert.ToUInt16(workingChangeTriggerString, 16);
+
+                        if (_changeTriggers.ContainsKey(changeTriggerAddress))
+                            _changeTriggers.Remove(changeTriggerAddress);
+                    }
+                }
+            }
+
+            NesEmu.ChangeTriggers = new List<ushort>();
+            NesEmu.ChangeTriggerHandler = onMemoryChanging;
+            foreach (ushort changeTriggerAddress in _changeTriggers.Keys)
+                NesEmu.ChangeTriggers.Add(changeTriggerAddress);
+
+            _readTriggers = new Dictionary<ushort, string>();
+            //_readTriggerAddresses.Add(0x0440, string.Empty);
+
+            NesEmu.ReadTriggers = new List<ushort>();
+            NesEmu.ReadTriggerHandler = onMemoryRead;
+            foreach (ushort readTriggerAddress in _readTriggers.Keys)
+                NesEmu.ReadTriggers.Add(readTriggerAddress);
         }
 
         #endregion
 
-        #region Change Trigger Handlers
+        #region Memory Trigger Handlers
 
         private void onMemoryChanging(ushort address, byte previousValue, byte newValue)
         {
             string label = "0x" + address.ToString("X4");
 
-            if (!string.IsNullOrWhiteSpace(_changeTriggerAddresses[address]))
-                label = _changeTriggerAddresses[address];
+            if (!string.IsNullOrWhiteSpace(_changeTriggers[address]))
+                label = _changeTriggers[address];
 
             //if (address == PLAYER_HIT_POINTS && newValue == 28)
             //{
@@ -124,81 +163,40 @@ namespace MyNes
             //    NesEmu.EmulationPaused = false;
             //}
 
-            writeLogMessage(string.Format("{0}: {1} -> {2}", label, previousValue, newValue));
+            Debug.WriteLine(string.Format("{0}: {1} -> {2}", label, previousValue, newValue));
         }
 
         private void onMemoryRead(ushort address, byte previousValue)
         {
             string label = "0x" + address.ToString("X4");
 
-            if (!string.IsNullOrWhiteSpace(_readTriggerAddresses[address]))
-                label = _readTriggerAddresses[address];
+            if (!string.IsNullOrWhiteSpace(_readTriggers[address]))
+                label = _readTriggers[address];
 
-            writeLogMessage(string.Format("{0}: {1}", label, previousValue));
+            Debug.WriteLine(string.Format("{0}: {1}", label, previousValue));
         }
 
         #endregion
 
-        #region Core Control Routines and Handlers
+        #region Miscellaneous Routines
 
-        private void resetThenLoadTimelineSave(string timelineSaveFilename)
+        private void upateTimelineSaves()
         {
-            _timelineSaveToLoad = Path.Combine(ASSETS_PATH, timelineSaveFilename);
-            _wasResetForTimelineLoad = true;
-            NesEmu.EMUHardReset();
-        }
+            List<string> saveStateFilenames = (from f in Directory.GetFiles(ASSETS_PATH) where f.Contains("Flash Man") || f.Contains("Metal Man") || f.Contains("Quick Man") select f).ToList();
 
-        private void onCoreHardReseted(object sender, EventArgs e)
-        {
-            if (_formMain.InvokeRequired)
-                _formMain.Invoke(new Action(() => onCoreHardReseted(sender, e)));
-            else
+            foreach (string saveStateFilename in saveStateFilenames)
             {
-                if (_wasResetForTimelineLoad)
-                {
-                    _wasResetForTimelineLoad = false;
-                    NesEmu.LoadStateAs(_timelineSaveToLoad);
-                    writeLogMessage(string.Format("Loaded timeline save: {0}", Path.GetFileNameWithoutExtension(_timelineSaveToLoad)));
-                }
-            }
-        }
+                FileStream saveStateFileStream = new FileStream(saveStateFilename, FileMode.Open, FileAccess.Read);
+                byte[] saveState = new byte[saveStateFileStream.Length];
+                saveStateFileStream.Read(saveState, 0, saveState.Length);
+                saveStateFileStream.Close();
 
-        #endregion
+                for (int loop = 0; loop < 11; loop++)
+                    saveState[0x191BE + 0x009C + loop] = 0x1C;
 
-        #region UI Routines and Handlers
-
-        private void onTimelineSaveThumbnailClick(object sender, EventArgs e)
-        {
-            TimelineSave timelineSave = (from ts in _timelineSaves where ts.ID == (int)((Control)sender).Tag select ts).FirstOrDefault();
-
-            if (timelineSave != null)
-                resetThenLoadTimelineSave(timelineSave.Filename);
-        }
-
-        private void onTimelinePanelPaint(object sender, PaintEventArgs e)
-        {
-            Graphics g = e.Graphics;
-
-            Control temp = ((Control)sender).Controls[0];
-
-            Pen myPen = new Pen(Color.Red);
-            myPen.Width = 3;
-
-            g.DrawLine(myPen, (temp.Location.X - 3), (temp.Location.Y - 3), (temp.Location.X + temp.Width + 3), (temp.Location.Y - 3));
-            g.DrawLine(myPen, (temp.Location.X - 3), (temp.Location.Y - 3), (temp.Location.X - 3), (temp.Location.Y + temp.Height + 3));
-            g.DrawLine(myPen, (temp.Location.X + temp.Width + 3), (temp.Location.Y - 3), (temp.Location.X + temp.Width + 3), (temp.Location.Y + temp.Height + 3));
-            g.DrawLine(myPen, (temp.Location.X - 3), (temp.Location.Y + temp.Height + 3), (temp.Location.X + temp.Width + 3), (temp.Location.Y + temp.Height + 3));
-        }
-
-        private void writeLogMessage(string message)
-        {
-            if (_formMain.InvokeRequired)
-                _formMain.Invoke(new Action(() => writeLogMessage(message)));
-            else
-            {
-                _logListBox.Items.Add(message);
-                _logListBox.SelectedIndex = _logListBox.Items.Count - 1;
-                _logListBox.SelectedIndex = -1;
+                saveStateFileStream = new FileStream(saveStateFilename, FileMode.Create, FileAccess.Write);
+                saveStateFileStream.Write(saveState, 0, saveState.Length);
+                saveStateFileStream.Close();
             }
         }
 
