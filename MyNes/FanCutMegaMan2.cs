@@ -21,7 +21,7 @@ namespace MyNes
         #endregion
 
         private const string ASSETS_PATH = @"Assets\Mega Man 2";
-        private const string TIMELINE_SAVE_FILE_EXTENSION = ".mns";
+        private const string TIMELINE_SAVE_FILE_EXTENSION = ".tls";
         private const string TIMELINE_SAVE_THUMBNAIL_FILE_EXTENSION = ".png";
         private const string CHECKPOINT_FILENAME_SUFFIX = " (checkpoint)";
 
@@ -54,7 +54,7 @@ namespace MyNes
             //upateTimelineSaves();
 
             formMain.OpenRom(Path.Combine(ASSETS_PATH, "Mega Man 2.nes"));
-            _fanCutCommon.ResetThenLoadTimelineSave("levelSelect.mns");
+            _fanCutCommon.ResetThenLoadTimelineSave("levelSelect.tls");
         }
 
         #region Initialization Routines
@@ -159,7 +159,7 @@ namespace MyNes
             //{
             //    NesEmu.WRAM[PLAYER_HIT_POINTS & 0x7FF] = 28;
             //    NesEmu.EmulationPaused = true;
-            //    NesEmu.SaveStateAs(ASSETS_PATH + "\\Metal Man (boss).mns");
+            //    NesEmu.SaveStateAs(ASSETS_PATH + "\\Metal Man (boss).tls");
             //    NesEmu.EmulationPaused = false;
             //}
 

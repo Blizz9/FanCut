@@ -12,7 +12,6 @@ namespace MyNes
         // TODO: Implement save state injection here first? Not really required.
         // TODO: Add timeline highlights
         // TODO: Add SHA-1 check on the ROM
-        // TODO: Move all save states to .ss, since they are really no longer mynes saves
         // TODO: Tell the user 2 players isnt supported
         // TODO: Do a new checkout and do a final compare with the virgin mynes code
 
@@ -57,7 +56,7 @@ namespace MyNes
         #endregion
 
         private const string ASSETS_PATH = @"Assets\Super Mario Bros";
-        private const string TIMELINE_SAVE_FILE_EXTENSION = ".mns";
+        private const string TIMELINE_SAVE_FILE_EXTENSION = ".tls";
         private const string TIMELINE_SAVE_THUMBNAIL_FILE_EXTENSION = ".png";
         private const string CHECKPOINT_FILENAME_SUFFIX = " (checkpoint)";
 
@@ -246,7 +245,7 @@ namespace MyNes
         {
             foreach (SuperMarioBrosLevel level in _levels)
             {
-                FileStream saveStateStream = new FileStream(@"Assets\base.mns", FileMode.Open, FileAccess.Read);
+                FileStream saveStateStream = new FileStream(@"Assets\base.tls", FileMode.Open, FileAccess.Read);
                 byte[] saveState = new byte[saveStateStream.Length];
                 saveStateStream.Read(saveState, 0, saveState.Length);
                 saveStateStream.Close();
@@ -266,7 +265,7 @@ namespace MyNes
                 saveState[WRAM_OFFSET + LEVEL_NUMBER_ADDRESS] = level.LevelNumber;
                 saveState[WRAM_OFFSET + LEVEL_CODE_ADDRESS] = level.AreaLoadedValue;
 
-                saveStateStream = new FileStream(@"Assets\" + level.Name + ".mns", FileMode.Create, FileAccess.Write);
+                saveStateStream = new FileStream(@"Assets\" + level.Name + ".tls", FileMode.Create, FileAccess.Write);
                 saveStateStream.Write(saveState, 0, saveState.Length);
                 saveStateStream.Close();
 
@@ -274,7 +273,7 @@ namespace MyNes
                 {
                     saveState[WRAM_OFFSET + STARTING_LEVEL_SCREEN_ADDRESS] = level.CheckpointScreenNumber;
 
-                    saveStateStream = new FileStream(@"Assets\" + level.Name + " (checkpoint).mns", FileMode.Create, FileAccess.Write);
+                    saveStateStream = new FileStream(@"Assets\" + level.Name + " (checkpoint).tls", FileMode.Create, FileAccess.Write);
                     saveStateStream.Write(saveState, 0, saveState.Length);
                     saveStateStream.Close();
                 }
