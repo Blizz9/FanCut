@@ -88,6 +88,20 @@ namespace MyNes
             _formMain.MaximizeBox = false;
             _formMain.Text = string.Format("FanCut: {0}", _gameName);
 
+            ToolStripMenuItem fileMenuItem = new ToolStripMenuItem();
+            fileMenuItem.Text = "&File";
+            ToolStripMenuItem exitMenuItem = new ToolStripMenuItem();
+            exitMenuItem.Text = "E&xit";
+            exitMenuItem.Click += new EventHandler(_formMain.exitToolStripMenuItem_Click);
+            fileMenuItem.DropDownItems.Add(exitMenuItem);
+            ToolStripMenuItem myNESMenuItems = new ToolStripMenuItem();
+            myNESMenuItems.Text = "&MyNES Menus";
+            int menuItemCount = _formMain.menuStrip1.Items.Count;
+            for (int index = 0; index < menuItemCount; index++)
+                myNESMenuItems.DropDownItems.Add(_formMain.menuStrip1.Items[0]);
+            _formMain.menuStrip1.Items.Add(fileMenuItem);
+            _formMain.menuStrip1.Items.Add(myNESMenuItems);
+
             _formMain.panel_surface.Dock = DockStyle.None;
             _formMain.panel_surface.Location = new Point(12, 36);
             _formMain.panel_surface.Size = new Size(512, 448);

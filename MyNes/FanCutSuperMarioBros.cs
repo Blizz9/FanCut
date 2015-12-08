@@ -12,7 +12,6 @@ namespace MyNes
         // TODO: Change EXE build name
         // TODO: Add compiler directives for each build
         // TODO: Add assets to source control
-        // TODO: Move MyNES menu items into one submenu
 
         // Things I Changed in virgin MyNES:
         // commented out some unused code that was causing compiler warnings

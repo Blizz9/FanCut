@@ -1045,7 +1045,7 @@ namespace MyNes
                 try { this.Invoke(new Action(ResetWindowText)); }
                 catch { }
         }
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        public void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
         }
