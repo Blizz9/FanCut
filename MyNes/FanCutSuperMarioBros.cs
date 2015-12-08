@@ -7,12 +7,12 @@ namespace MyNes
 {
     internal class FanCutSuperMarioBros
     {
-        // TODO: Add pictures for save states that don't have them
         // TODO: Add timeline highlights
         // TODO: Do a new checkout and do a final compare with the virgin mynes code
-        // TODO: Change window title
-        // TODO: Add better description to open rom window
         // TODO: Change EXE build name
+        // TODO: Add compiler directives for each build
+        // TODO: Add assets to source control
+        // TODO: Move MyNES menu items into one submenu
 
         // Things I Changed in virgin MyNES:
         // commented out some unused code that was causing compiler warnings
@@ -28,6 +28,8 @@ namespace MyNes
         //     Added instantiation of FanCut on loaded
         //     Added locking of window and play surface
         //     Added injection of Timeline and Log into form
+        //     Removed changing or window title
+        //     Changed window title to "FanCut"
 
         #region Memory Locations and Values
 
@@ -56,7 +58,8 @@ namespace MyNes
 
         #endregion
 
-        private const string ASSETS_PATH = @"Assets\Super Mario Bros";
+        private const string GAME_NAME = "Super Mario Bros";
+        private const string ASSETS_PATH = @"Assets\" + GAME_NAME;
         private const string SHA1_HASH = "EA343F4E445A9050D4B4FBAC2C77D0693B1D0922";
         private const string TIMELINE_SAVE_FILE_EXTENSION = ".tls";
         private const string TIMELINE_SAVE_THUMBNAIL_FILE_EXTENSION = ".png";
@@ -150,7 +153,7 @@ namespace MyNes
             NesEmu.ChangeTriggers.Add(LEVEL_NUMBER_ADDRESS);
             NesEmu.ChangeTriggerHandler = onMemoryChanging;
 
-            _fanCutCommon = new FanCutCommon(formMain, ASSETS_PATH, _timelineSaves, SHA1_HASH);
+            _fanCutCommon = new FanCutCommon(formMain, GAME_NAME, ASSETS_PATH, _timelineSaves, SHA1_HASH);
         }
 
         #region Memory Trigger Handlers

@@ -15,6 +15,7 @@ namespace MyNes
     {
         private FormMain _formMain;
         private List<TimelineSave> _timelineSaves;
+        private string _gameName;
         private string _assetsPath;
 
         private ListBox _logListBox;
@@ -22,9 +23,10 @@ namespace MyNes
         private bool _wasResetForTimelineLoad = false;
         private string _timelineSaveToLoad;
 
-        internal FanCutCommon(FormMain formMain, string assetsPath, List<TimelineSave> timelineSaves, string sha1Hash)
+        internal FanCutCommon(FormMain formMain, string gameName, string assetsPath, List<TimelineSave> timelineSaves, string sha1Hash)
         {
             _formMain = formMain;
+            _gameName = gameName;
             _assetsPath = assetsPath;
             _timelineSaves = timelineSaves;
 
@@ -33,7 +35,7 @@ namespace MyNes
             layoutFormMain();
 
             OpenFileDialog romOpenFileDialog = new OpenFileDialog();
-            romOpenFileDialog.Title = Program.ResourceManager.GetString("Title_OpenRom");
+            romOpenFileDialog.Title = string.Format("Open {0} ROM", gameName);
             romOpenFileDialog.Filter = "NES ROM (*.nes) | *.nes";
 
             bool isROMSelected = false;
@@ -81,9 +83,10 @@ namespace MyNes
             const int THUMBNAIL_WIDTH = 256;
             const int THUMBNAIL_HEIGHT = 224;
 
-            _formMain.Size = new Size(1048, 682);
+            _formMain.Size = new Size(968, 682);
             _formMain.FormBorderStyle = FormBorderStyle.FixedSingle;
             _formMain.MaximizeBox = false;
+            _formMain.Text = string.Format("FanCut: {0}", _gameName);
 
             _formMain.panel_surface.Dock = DockStyle.None;
             _formMain.panel_surface.Location = new Point(12, 36);
@@ -91,14 +94,14 @@ namespace MyNes
 
             GroupBox timelineGroupBox = new GroupBox();
             timelineGroupBox.Location = new Point(536, 26);
-            timelineGroupBox.Size = new Size(486, 608);
+            timelineGroupBox.Size = new Size(406, 608);
             timelineGroupBox.Font = new Font("Arial", 12);
             timelineGroupBox.Text = "Timeline";
             _formMain.Controls.Add(timelineGroupBox);
 
             Panel timelinePanel = new Panel();
             timelinePanel.Location = new Point(3, 22);
-            timelinePanel.Size = new Size(494, 618);
+            timelinePanel.Size = new Size(414, 618);
             timelinePanel.Dock = DockStyle.Fill;
             timelinePanel.AutoScroll = true;
             timelinePanel.Paint += onTimelinePanelPaint;

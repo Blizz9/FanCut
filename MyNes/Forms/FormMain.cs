@@ -203,17 +203,17 @@ namespace MyNes
 
                     InitializeInputRenderer();
 
-                    if (NesEmu.IsGameFoundOnDB)
-                    {
-                        if (NesEmu.GameInfo.Game_AltName != null && NesEmu.GameInfo.Game_AltName != "")
-                            this.Text = NesEmu.GameInfo.Game_Name + " (" + NesEmu.GameInfo.Game_AltName + ") - My Nes";
-                        else
-                            this.Text = NesEmu.GameInfo.Game_Name + " - My Nes";
-                    }
-                    else
-                    {
-                        this.Text = Path.GetFileName(NesEmu.GAMEFILE) + " - My Nes";
-                    }
+                    //if (NesEmu.IsGameFoundOnDB)
+                    //{
+                    //    if (NesEmu.GameInfo.Game_AltName != null && NesEmu.GameInfo.Game_AltName != "")
+                    //        this.Text = NesEmu.GameInfo.Game_Name + " (" + NesEmu.GameInfo.Game_AltName + ") - My Nes";
+                    //    else
+                    //        this.Text = NesEmu.GameInfo.Game_Name + " - My Nes";
+                    //}
+                    //else
+                    //{
+                    //    this.Text = Path.GetFileName(NesEmu.GAMEFILE) + " - My Nes";
+                    //}
                     NesEmu.EmulationPaused = false;
                 }
                 else
@@ -1035,7 +1035,7 @@ namespace MyNes
             }
         }
         private void ResetWindowText()
-        { try { this.Text = "My Nes"; } catch { } }
+        { try { /*this.Text = "My Nes";*/ } catch { } }
 
         private void NesEmu_EMUShutdown(object sender, EventArgs e)
         {
