@@ -1352,8 +1352,11 @@ namespace MyNes
         }
         private void FormMain_Load(object sender, EventArgs e)
         {
-            //FanCutSuperMarioBros fanCut = new FanCutSuperMarioBros(this);
+#if (SUPER_MARIO_BROS)
+            FanCutSuperMarioBros fanCut = new FanCutSuperMarioBros(this);
+#elif (MEGA_MAN_2)
             FanCutMegaMan2 fanCut = new FanCutMegaMan2(this);
+#endif
         }
         private void FormMain_Activated(object sender, EventArgs e)
         {

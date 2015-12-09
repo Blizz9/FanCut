@@ -9,8 +9,6 @@ namespace MyNes
     {
         // TODO: Add timeline highlights
         // TODO: Do a new checkout and do a final compare with the virgin mynes code
-        // TODO: Change EXE build name
-        // TODO: Add compiler directives for each build
         // TODO: Add assets to source control
 
         // Things I Changed in virgin MyNES:
@@ -22,6 +20,8 @@ namespace MyNes
         // added memory read trigger functionality
         // commented out zlib compression on save states (for easier save state file analysis)
         // commented out support for acrobat reading of manual (so we don't need the library)
+        // renamed EXE
+        // BE SURE TO ATTRIBUTE WITH LINK
         // Main Form:
         //     Removed sizing based on settings
         //     Added instantiation of FanCut on loaded
@@ -58,7 +58,7 @@ namespace MyNes
         #endregion
 
         private const string GAME_NAME = "Super Mario Bros";
-        private const string ASSETS_PATH = @"Assets\" + GAME_NAME;
+        private const string ASSETS_PATH = @"Assets";
         private const string SHA1_HASH = "EA343F4E445A9050D4B4FBAC2C77D0693B1D0922";
         private const string TIMELINE_SAVE_FILE_EXTENSION = ".tls";
         private const string TIMELINE_SAVE_THUMBNAIL_FILE_EXTENSION = ".png";

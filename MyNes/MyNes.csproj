@@ -8,25 +8,41 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MyNes</RootNamespace>
-    <AssemblyName>MyNes</AssemblyName>
+    <AssemblyName>FanCut</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug %28Super Mario Bros%29|x86' ">
     <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>..\Builds\Debug\Super Mario Bros\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;SUPER_MARIO_BROS</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release %28Super Mario Bros%29|x86' ">
     <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\Builds\Release\Super Mario Bros\</OutputPath>
     <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;SUPER_MARIO_BROS</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Resources\MyNes.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28Mega Man 2%29|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\Builds\Debug\Mega Man 2\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MEGA_MAN_2</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release %28Mega Man 2%29|x86'">
+    <OutputPath>..\Builds\Release\Mega Man 2\</OutputPath>
+    <DefineConstants>TRACE;MEGA_MAN_2</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SevenZipSharp">

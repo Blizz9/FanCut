@@ -19,7 +19,7 @@ namespace MyNes
         #endregion
 
         private const string GAME_NAME = "Mega Man 2";
-        private const string ASSETS_PATH = @"Assets\" + GAME_NAME;
+        private const string ASSETS_PATH = @"Assets";
         private const string SHA1_HASH = "6B5B9235C3F630486ED8F07A133B044EAA2E22B2";
         private const string TIMELINE_SAVE_FILE_EXTENSION = ".tls";
         private const string TIMELINE_SAVE_THUMBNAIL_FILE_EXTENSION = ".png";
