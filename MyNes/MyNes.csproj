@@ -12,12 +12,6 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug %28Super Mario Bros%29|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>..\Builds\Debug\Super Mario Bros\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SUPER_MARIO_BROS</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release %28Super Mario Bros%29|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>..\Builds\Release\Super Mario Bros\</OutputPath>

@@ -29,8 +29,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5883614C-A4E9-41E5-B446-1FE179A54811}.Debug (Mega Man 2)|x86.ActiveCfg = Debug (Mega Man 2)|x86
 		{5883614C-A4E9-41E5-B446-1FE179A54811}.Debug (Mega Man 2)|x86.Build.0 = Debug (Mega Man 2)|x86
-		{5883614C-A4E9-41E5-B446-1FE179A54811}.Debug (Super Mario Bros)|x86.ActiveCfg = Debug (Super Mario Bros)|x86
-		{5883614C-A4E9-41E5-B446-1FE179A54811}.Debug (Super Mario Bros)|x86.Build.0 = Debug (Super Mario Bros)|x86
+		{5883614C-A4E9-41E5-B446-1FE179A54811}.Debug (Super Mario Bros)|x86.ActiveCfg = Debug (Mega Man 2)|x86
+		{5883614C-A4E9-41E5-B446-1FE179A54811}.Debug (Super Mario Bros)|x86.Build.0 = Debug (Mega Man 2)|x86
 		{5883614C-A4E9-41E5-B446-1FE179A54811}.Release (Mega Man 2)|x86.ActiveCfg = Release (Mega Man 2)|x86
 		{5883614C-A4E9-41E5-B446-1FE179A54811}.Release (Mega Man 2)|x86.Build.0 = Release (Mega Man 2)|x86
 		{5883614C-A4E9-41E5-B446-1FE179A54811}.Release (Super Mario Bros)|x86.ActiveCfg = Release (Super Mario Bros)|x86

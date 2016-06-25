@@ -204,10 +204,10 @@ namespace MyNes
                 Pen myPen = new Pen(Color.Red);
                 myPen.Width = 3;
 
-                g.DrawLine(myPen, (temp.Location.X - 3), (temp.Location.Y - 3), (temp.Location.X + temp.Width + 3), (temp.Location.Y - 3));
-                g.DrawLine(myPen, (temp.Location.X - 3), (temp.Location.Y - 3), (temp.Location.X - 3), (temp.Location.Y + temp.Height + 3));
-                g.DrawLine(myPen, (temp.Location.X + temp.Width + 3), (temp.Location.Y - 3), (temp.Location.X + temp.Width + 3), (temp.Location.Y + temp.Height + 3));
-                g.DrawLine(myPen, (temp.Location.X - 3), (temp.Location.Y + temp.Height + 3), (temp.Location.X + temp.Width + 3), (temp.Location.Y + temp.Height + 3));
+                g.DrawLine(myPen, (temp.Location.X - 5), (temp.Location.Y - 5), (temp.Location.X + temp.Width + 5), (temp.Location.Y - 5));
+                g.DrawLine(myPen, (temp.Location.X - 5), (temp.Location.Y - 5), (temp.Location.X - 5), (temp.Location.Y + temp.Height + 5));
+                g.DrawLine(myPen, (temp.Location.X + temp.Width + 5), (temp.Location.Y - 5), (temp.Location.X + temp.Width + 5), (temp.Location.Y + temp.Height + 5));
+                g.DrawLine(myPen, (temp.Location.X - 5), (temp.Location.Y + temp.Height + 5), (temp.Location.X + temp.Width + 5), (temp.Location.Y + temp.Height + 5));
             }
         }
 
