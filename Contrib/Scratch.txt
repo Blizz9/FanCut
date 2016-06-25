@@ -1,0 +1,13 @@
+0x0029, 0x0069: Contoller stuff?
+
+0x002A: selected portrait and selected robot
+
+0x0066: flag to go along with 002A?
+
+45-64
+30-64
+
+
+1->3    2->1    3->4
+8->0            4->2
+7->6    6->5    5->7
